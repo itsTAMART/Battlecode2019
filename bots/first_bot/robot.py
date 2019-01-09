@@ -1,8 +1,13 @@
 from battlecode import BCAbstractRobot, SPECS
-import battlecode as bc
-import random
 
-from .units import *
+# from .units import *
+from bots.first_bot.units.castle import *
+from bots.first_bot.units.church import *
+from bots.first_bot.units.pilgrim import *
+from bots.first_bot.units.crusader import *
+from bots.first_bot.units.preacher import *
+from bots.first_bot.units.prophet import *
+
 
 __pragma__('iconv')
 __pragma__('tconv')

@@ -1,42 +1,48 @@
 import numpy as np
+from battlecode import BCAbstractRobot, SPECS
 
 
-def can_build(name='PILGRIM', karbonite=0, fuel=0):
+def can_build(self):
     """
     Helper method for building units
-    :param name:
-    :param karbonite:
-    :param fuel:
-    :return: True if you have mateials to build unit
+    :param self:
+    :return: True if you have materials to build unit
     """
-    if name == 'CHURCH':
-        return karbonite >= 50 & fuel >= 200
+    karb = self.karbonite
+    fuel = self.fuel
 
-    elif name == 'PILGRIM':
-        return karbonite >= 10 & fuel >= 50
+    unit_specs = SPECS['UNITS'][SPECS[self.me.unit]]
+    karb_cost = unit_specs['CONSTRUCTION_KARBONITE']
+    fuel_cost = unit_specs['CONSTRUCTION_FUEL']
 
-    elif name == 'CRUSADER':
-        return karbonite >= 20 & fuel >= 50
+    # TODO check adjacent tiles
 
-    elif name == 'PROPHET':
-        return karbonite >= 25 & fuel >= 50
+    return karb >= karb_cost & fuel >= fuel_cost
 
-    elif name == 'PREACHER':
-        return karbonite >= 30 & fuel >= 50
-    else:
-        print('{} not known'.format(name))
+
+def can_move(self):
+    fuel = self.fuel
+
+    unit_specs = SPECS['UNITS'][SPECS[self.me.unit]]
+    fuel_cost = unit_specs['FUEL_PER_MOVE']  # TODO multiply by the distance
+    if fuel < fuel_cost:
+        self.log('Not enough Fuel to move')
         return False
 
+    # TODO check if it is occupied
     return False
 
 
-def can_move():
-    # TODO
-    return False
+def can_attack(self):
+    fuel = self.fuel
 
+    unit_specs = SPECS['UNITS'][SPECS[self.me.unit]]
+    fuel_cost = unit_specs['ATTACK_FUEL_COST']
+    if fuel < fuel_cost:
+        self.log('Not enough Fuel to attack')
+        return False
 
-def can_attack():
-    # TODO
+    # TODO check if it is in range
     return False
 
 
