@@ -2,8 +2,6 @@ from battlecode import BCAbstractRobot, SPECS
 import battlecode as bc
 import random
 
-# from bots.first_bot.units.crusader import *
-# from bots.first_bot.units.castle import *
 from .units import *
 
 __pragma__('iconv')
