@@ -1,6 +1,7 @@
 import numpy as np
 from battlecode import BCAbstractRobot, SPECS
-
+import battlecode as bc
+import random
 
 def can_build(self, unit_name):
     """
@@ -21,6 +22,25 @@ def can_build(self, unit_name):
     self.log('result: {}'.format(result))
     return result
 
+
+def naive_build(self, unit_name):
+    """
+    tries to build around
+    :param self:
+    :param unit_name: name of the unit to build e.g. PILGRIM
+    :return: True if you have materials to build unit
+    """
+    karb = self.karbonite
+    fuel = self.fuel
+    # self.log('Karb: {}, Fuel: {}'.format(karb,fuel))
+    unit_specs = SPECS['UNITS'][SPECS[unit_name]]
+    karb_cost = unit_specs['CONSTRUCTION_KARBONITE']
+    fuel_cost = unit_specs['CONSTRUCTION_FUEL']
+    # self.log('Karb_c: {}, Fuel_c: {}'.format(karb_cost, fuel_cost))
+    # TODO check adjacent tiles
+    result = (karb >= karb_cost) and (fuel >= fuel_cost)
+    self.log('result: {}'.format(result))
+    return result
 
 def can_move(self):
     fuel = self.fuel

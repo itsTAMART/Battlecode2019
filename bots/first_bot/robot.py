@@ -17,24 +17,38 @@ __pragma__('opov')
 # don't try to use global variables!!
 class MyRobot(BCAbstractRobot):
     step = -1
-
-    """
-
-    PREPROCESS HERE   
-
-    GENERAL AND SPECIFIC
-
-
-    """
+    vision_list = []
+    vision_map = []
+    passable_map = []
+    karbonite_map = []
 
     def turn(self):
+        """
+
+        :return: action
+        """
         self.step += 1
+        if self.step == 0:
+            """
+    
+            FIRST TURN PREPROCESS HERE   
+    
+            GENERAL AND SPECIFIC
+    
+    
+            """
+            self.passable_map = self.get_passable_map()
+            self.karbonite_map = self.get_karbonite_map()
+            # TODO create a method to gather info of the map, size, type, n_castles etc...
+            self.log('Map size {}x{}'.format(len(self.passable_map[0]),
+                                             len(self.passable_map)))
 
         """
         GENERAL PRE-TURN HERE
 
         """
-
+        self.vision_map = self.get_visible_robot_map()
+        self.vision_list = self.get_visible_robots()
         self.log("turn " + self.step)
 
         """
@@ -42,7 +56,7 @@ class MyRobot(BCAbstractRobot):
         SPECIFIC ACTIONS HERE
 
         """
-
+        # TODO reactivate units
         if self.me['unit'] == SPECS['CASTLE']:
             self.log('castle')
             return castle(self)
