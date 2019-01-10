@@ -19,12 +19,12 @@ class MyRobot(BCAbstractRobot):
     step = -1
 
     """
-    
+
     PREPROCESS HERE   
-    
+
     GENERAL AND SPECIFIC
-    
-    
+
+
     """
 
     def turn(self):
@@ -32,34 +32,36 @@ class MyRobot(BCAbstractRobot):
 
         """
         GENERAL PRE-TURN HERE
-        
-        """
-
-        self.log("START TURN " + self.step)
 
         """
-        
+
+        self.log("turn " + self.step)
+
+        """
+
         SPECIFIC ACTIONS HERE
-        
+
         """
 
         if self.me['unit'] == SPECS['CASTLE']:
-            castle(self)
+            self.log('castle')
+            return castle(self)
 
-        elif self.me['unit'] == SPECS['CHURCH']:
-            church(self)
+        # elif self.me['unit'] == SPECS['CHURCH']:
+        #     church(self)
 
         elif self.me['unit'] == SPECS['PILGRIM']:
-            pilgrim(self)
-
-        elif self.me['unit'] == SPECS['CRUSADER']:
-            crusade(self)
-
-        elif self.me['unit'] == SPECS['PROPHET']:
-            prophet(self)
-
-        elif self.me['unit'] == SPECS['PREACHER']:
-            preach(self)
+            self.log('pilgrim')
+            return pilgrim(self)
+        #
+        # elif self.me['unit'] == SPECS['CRUSADER']:
+        #     crusade(self)
+        #
+        # elif self.me['unit'] == SPECS['PROPHET']:
+        #     prophet(self)
+        #
+        # elif self.me['unit'] == SPECS['PREACHER']:
+        #     preach(self)
 
         """
         ########################################################################

@@ -2,22 +2,24 @@ import numpy as np
 from battlecode import BCAbstractRobot, SPECS
 
 
-def can_build(self):
+def can_build(self, unit_name):
     """
     Helper method for building units
     :param self:
+    :param unit_name: name of the unit to build e.g. PILGRIM
     :return: True if you have materials to build unit
     """
     karb = self.karbonite
     fuel = self.fuel
-
-    unit_specs = SPECS['UNITS'][SPECS[self.me.unit]]
+    # self.log('Karb: {}, Fuel: {}'.format(karb,fuel))
+    unit_specs = SPECS['UNITS'][SPECS[unit_name]]
     karb_cost = unit_specs['CONSTRUCTION_KARBONITE']
     fuel_cost = unit_specs['CONSTRUCTION_FUEL']
-
+    # self.log('Karb_c: {}, Fuel_c: {}'.format(karb_cost, fuel_cost))
     # TODO check adjacent tiles
-
-    return karb >= karb_cost & fuel >= fuel_cost
+    result = (karb >= karb_cost) and (fuel >= fuel_cost)
+    self.log('result: {}'.format(result))
+    return result
 
 
 def can_move(self):
