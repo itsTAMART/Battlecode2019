@@ -5,10 +5,7 @@ import random
 
 
 def pilgrim(self):
-    self.log('Pilgrim id:{}'.format(self.id))
-
     # Move to closest non-occupied mine
-    self.log('moving to closest non occupied mine')
 
     # Temporal walking code
     choices = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]

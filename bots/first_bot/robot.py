@@ -17,10 +17,12 @@ __pragma__('opov')
 # don't try to use global variables!!
 class MyRobot(BCAbstractRobot):
     step = -1
+    fuel_consumed = 0
     vision_list = []
     vision_map = []
     passable_map = []
     karbonite_map = []
+    game_info = None
 
     def turn(self):
         """
@@ -40,8 +42,9 @@ class MyRobot(BCAbstractRobot):
             self.passable_map = self.get_passable_map()
             self.karbonite_map = self.get_karbonite_map()
             # TODO create a method to gather info of the map, size, type, n_castles etc...
-            self.log('Map size {}x{}'.format(len(self.passable_map[0]),
-                                             len(self.passable_map)))
+            self.game_info = get_initial_game_info(self)
+            self.log('Map size {}x{}'.format(self.game_info['map_size'],
+                                             self.game_info['map_size']))
 
         """
         GENERAL PRE-TURN HERE
@@ -49,7 +52,7 @@ class MyRobot(BCAbstractRobot):
         """
         self.vision_map = self.get_visible_robot_map()
         self.vision_list = self.get_visible_robots()
-        self.log("turn " + self.step)
+        unit_monitor(self)
 
         """
 
@@ -58,14 +61,14 @@ class MyRobot(BCAbstractRobot):
         """
         # TODO reactivate units
         if self.me['unit'] == SPECS['CASTLE']:
-            self.log('castle')
+            # self.log('castle')
             return castle(self)
 
         # elif self.me['unit'] == SPECS['CHURCH']:
         #     church(self)
 
         elif self.me['unit'] == SPECS['PILGRIM']:
-            self.log('pilgrim')
+            #self.log('pilgrim')
             return pilgrim(self)
         #
         # elif self.me['unit'] == SPECS['CRUSADER']:
