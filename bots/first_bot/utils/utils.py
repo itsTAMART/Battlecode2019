@@ -1,3 +1,4 @@
+#
 import numpy as np
 from battlecode import BCAbstractRobot, SPECS
 import battlecode as bc

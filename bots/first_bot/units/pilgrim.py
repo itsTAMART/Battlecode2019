@@ -1,4 +1,4 @@
-
+#
 from battlecode import BCAbstractRobot, SPECS
 import battlecode as bc
 import random
@@ -10,8 +10,10 @@ def pilgrim(self):
     # Temporal walking code
     choices = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]
     choice = random.choice(choices)
-    self.log('TRYING TO MOVE IN DIRECTION ' + str(choice))
+    self.log('try to move ' + str(choice))
     return self.move(*choice)
 
-    # # Mine
+    # # Mine till full, (temporarily) come back
     # self.log('mining')
+
+#

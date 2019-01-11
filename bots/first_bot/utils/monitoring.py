@@ -1,4 +1,11 @@
+#
 TYPES = ["CASTLE", "CHURCH", "PILGRIM", "CRUSADER", "PROPHET", "PREACHER"]
+
+
+def first_turn_monitor(self):
+    # TODO do it
+    self.log('Map size {}x{}'.format(self.game_info['map_size'],
+                                     self.game_info['map_size']))
 
 
 def unit_monitor(self):
@@ -11,7 +18,7 @@ def unit_monitor(self):
               ' turn: {turn}, alive: {alive} \n' \
               ' fuel consumed: {fuel} \n ' \
               '- \n'.format(
-        unit_type=TYPES[self.me['unit']],  # TODO left here
+        unit_type=TYPES[self.me['unit']],
         id=self.me['id'],
         turn=self.me['turn'],
         alive=self.step,
@@ -23,3 +30,4 @@ def unit_monitor(self):
 
 # TODO specific monitors for each units
 # Carrying materials
+#
