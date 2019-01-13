@@ -92,6 +92,20 @@ def can_build(self, unit_name, x, y):
 
 
 # TODO test
+def can_mine(self, x, y):
+    # Find if x,y can be mined and if you have enough capacity
+    unit_specs = SPECS['UNITS'][SPECS[self.me.unit]]
+    fuel_capacity = unit_specs['FUEL_CAPACITY']
+    karb_capacity = unit_specs['KARBONITE_CAPACITY']
+
+    if self.fuel_map[y][x]:
+        return not (self.me.fuel == fuel_capacity)
+    if self.karbonite_map[y][x]:
+        return not (self.me.karbonite == karb_capacity)
+    return False
+
+
+# TODO test
 def can_move(self, x, y):
     """
     Check if the robot can move to that tile by fuel, range and occupied.

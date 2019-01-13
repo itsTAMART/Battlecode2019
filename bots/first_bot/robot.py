@@ -17,11 +17,15 @@ __pragma__('opov')
 
 # don't try to use global variables!!
 class MyRobot(BCAbstractRobot):
+
     # Lists and maps
     vision_list = []
     vision_map = []
     passable_map = []
     karbonite_map = []
+
+    # Unit Variables
+    destination = None
 
     # Game info blob
     game_info = None
@@ -32,7 +36,7 @@ class MyRobot(BCAbstractRobot):
 
     # Helper Objects
     build_order = None
-
+    nav = None
 
 
     def turn(self):
@@ -65,19 +69,17 @@ class MyRobot(BCAbstractRobot):
             """
             # TODO reactivate units
             if self.me['unit'] == SPECS['CASTLE']:
-                # self.log('castle')
                 first_turn_castle(self)
-            # elif self.me['unit'] == SPECS['CHURCH']:
-            #     firs_turn_church(self)
-            # elif self.me['unit'] == SPECS['PILGRIM']:
-            #     # self.log('pilgrim')
-            #     firs_turn_pilgrim(self)
-            # elif self.me['unit'] == SPECS['CRUSADER']:
-            #     first_turn_crusade(self)
-            # elif self.me['unit'] == SPECS['PROPHET']:
-            #     firs_turn_prophet(self)
-            # elif self.me['unit'] == SPECS['PREACHER']:
-            #     firs_turn_preach(self)
+            elif self.me['unit'] == SPECS['CHURCH']:
+                first_turn_church(self)
+            elif self.me['unit'] == SPECS['PILGRIM']:
+                first_turn_pilgrim(self)
+            elif self.me['unit'] == SPECS['CRUSADER']:
+                first_turn_crusader(self)
+            elif self.me['unit'] == SPECS['PROPHET']:
+                first_turn_prophet(self)
+            elif self.me['unit'] == SPECS['PREACHER']:
+                first_turn_preacher(self)
 
 
 
@@ -98,16 +100,16 @@ class MyRobot(BCAbstractRobot):
         # TODO reactivate units
         if self.me['unit'] == SPECS['CASTLE']:
             return castle(self)
-        # elif self.me['unit'] == SPECS['CHURCH']:
-        #     return church(self)
+        elif self.me['unit'] == SPECS['CHURCH']:
+            return church(self)
         elif self.me['unit'] == SPECS['PILGRIM']:
             return pilgrim(self)
         elif self.me['unit'] == SPECS['CRUSADER']:
             return crusade(self)
-        # elif self.me['unit'] == SPECS['PROPHET']:
-        #     return prophet(self)
-        # elif self.me['unit'] == SPECS['PREACHER']:
-        #     return preach(self)
+        elif self.me['unit'] == SPECS['PROPHET']:
+            return prophet(self)
+        elif self.me['unit'] == SPECS['PREACHER']:
+            return preacher(self)
 
         """
         ########################################################################

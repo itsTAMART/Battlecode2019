@@ -16,13 +16,17 @@ def unit_monitor(self):
     message = '- \n' \
               ' Type: {unit_type}, id: {id} \n' \
               ' turn: {turn}, alive: {alive} \n' \
-              ' fuel consumed: {fuel} \n ' \
+              ' fuel consumed: {fuel} \n' \
+              ' my position: {position} \n' \
+              ' my goal: {goal} \n' \
               '- \n'.format(
         unit_type=TYPES[self.me['unit']],
         id=self.me['id'],
         turn=self.me['turn'],
         alive=self.step,
-        fuel=self.fuel_consumed
+        fuel=self.fuel_consumed,
+        position=(self.me.x, self.me.y),
+        goal=self.destination
     )
     self.log(message)
 
