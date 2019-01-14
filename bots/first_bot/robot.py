@@ -26,6 +26,8 @@ class MyRobot(BCAbstractRobot):
 
     # Unit Variables
     destination = None
+    spawn_loc = None
+    useful_locations = []
 
     # Game info blob
     game_info = None
@@ -67,7 +69,6 @@ class MyRobot(BCAbstractRobot):
             SPECIFIC FIRST TURN
 
             """
-            # TODO reactivate units
             if self.me['unit'] == SPECS['CASTLE']:
                 first_turn_castle(self)
             elif self.me['unit'] == SPECS['CHURCH']:
@@ -97,7 +98,6 @@ class MyRobot(BCAbstractRobot):
         SPECIFIC ACTIONS HERE
 
         """
-        # TODO reactivate units
         if self.me['unit'] == SPECS['CASTLE']:
             return castle(self)
         elif self.me['unit'] == SPECS['CHURCH']:

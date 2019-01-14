@@ -46,7 +46,7 @@ def in_range_tiles(self, x, y, r):
     :param r: radius squared
     :return:
     """
-    # TODO just do it (LEFT HERE)
+    # TODO just do it
     return
 
 
@@ -124,20 +124,29 @@ def rotate(orig_dir, amount):
     return direction
 
 
-def goto(self, target):
-    self.log('entering goto')
-    loc = (self.me.x, self.me.y)
-    self.log('line 1')
+def goto(bc, target):
+    """
+
+    :param bc: battlecode object
+    :param target: tuple target location
+    :return:
+    """
+    # bc.log('entering goto')
+    loc = (bc.me.x, bc.me.y)
+    # bc.log('line 1')
     goal_dir = direction_to(loc, target)
-    self.log('Goal dir: {}'.format(goal_dir))
-    self.log('loc: {}'.format(loc))
-    if goal_dir is (0, 0):
-        self.log('goal dir is 0,0')
+    bc.log('Goal dir: {}'.format(goal_dir))
+    # bc.log('loc: {}'.format(loc))
+    if goal_dir[0] == goal_dir[1] == 0:  # goal_dir == (0, 0):
+        # bc.log('goal dir is 0,0')
         return (0, 0)
-    self.log('line 5')
+
+    # bc.log('line 5')
     # self.log("MOVING FROM " + str(my_coord) + " TO " + str(nav.dir_to_coord[goal_dir]))
     i = 0
-    while is_occupied(self, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) and i < 4:
+    # bc.log(loc)
+    # bc.log(goal_dir)
+    while is_occupied(bc, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) and i < 4:
         # TODO make it able to bug
         # or apply_dir(loc, goal_dir) in already_been: # doesn't work because `in` doesn't work :(
         # alternate checking either side of the goal dir, by increasing amounts (but not past directly backwards)
@@ -146,7 +155,7 @@ def goto(self, target):
         else:
             i = -i + 1
         goal_dir = rotate(goal_dir, i)
-    self.log('line final')
+    # bc.log('line final')
     return goal_dir
 
 
@@ -164,22 +173,19 @@ class Navigation(object):
 
     def __init__(self, robot_object, destination=None):
         self.destination = destination
-        self.origin = (robot_object.me.x, robot_object.me.y)
+        # self.origin = (robot_object.me.x, robot_object.me.y)
         # self.passable_map = robot_object.passable_map
 
     def next_tile(self, robot_object):
         # Move in the target direction
         # If cannot move more, bug the walls
-        # TODO change it
+        # TODO improve it
+
         return goto(robot_object, self.destination)
 
     def set_destination(self, destination):
         self.visited = []
         self.trajectory = []
         self.destination = destination
-
-    def recalculate(self):
-        # TODO
-        return
 
 #
