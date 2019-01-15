@@ -64,13 +64,25 @@ def my_loc(self):
     return self.me.x, self.me.y
 
 
-def locate(robot):
+# def locate(robot):
+#     """
+#     Location of a robot class
+#     :param robot:
+#     :return:
+#     """
+#     return robot.x, robot.y
+
+def diference_to(origin, destination):
     """
-    Location of a robot class
-    :param robot:
-    :return:
+
+    :param origin: location
+    :param destination:
+    :return: (destination - origin) vector
     """
-    return robot.x, robot.y
+    dx = destination[0] - origin[0]
+    dy = destination[1] - origin[1]
+
+    return (dx, dy)
 
 
 def direction_to(origin, destination):
@@ -93,6 +105,19 @@ def direction_to(origin, destination):
         dy = 1
 
     return (dx, dy)
+
+
+def distance(origin, destination):
+    """
+
+    :param origin: location
+    :param destination:
+    :return: distance squared
+    """
+    dx = destination[0] - origin[0]
+    dy = destination[1] - origin[1]
+
+    return (dx ** 2 + dy ** 2)
 
 
 """
@@ -131,6 +156,9 @@ def goto(bc_object, target):
     :param target: tuple target location
     :return:
     """
+    if target is None:
+        return (0, 0)
+
     # bc.log('entering goto')
     loc = (bc_object.me.x, bc_object.me.y)
     # bc.log('line 1')

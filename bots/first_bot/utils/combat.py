@@ -108,7 +108,7 @@ class CombatManager(object):
                         break
 
         # Debug
-        # self.log_lists(bc)
+        self.log_lists(bc)
 
     # TODO list of methods
 
@@ -118,6 +118,19 @@ class CombatManager(object):
         for r in self.attackable:
             if r.health < min_health:
                 min_health = r.health
+                enemy = r
+        return enemy
+
+    # TODO test
+    def closest_visible_enemy(self, bc):
+        enemies = self.enemy_castles + self.enemy_military + self.enemy_civil  # TODO the problem is here
+        bc.log(enemies)  # Debug TODO en el log pone que es un object
+        min_dist = 10000
+        enemy = None
+        for r in enemies:
+            dist = distance(locate(bc.me), locate(r))
+            if dist < min_dist:
+                min_dist = dist
                 enemy = r
         return enemy
 

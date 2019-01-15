@@ -267,6 +267,10 @@ def im_at(bc, location):
     :param location: tuple of (x, y)
     :return: True if standing at that position
     """
+    if location is None:
+        bc.log('im_at: location passed was None')
+        return False  # Default true to push for next castle?
+
     return bc.me.x == location[0] and bc.me.y == location[1]
 
 
