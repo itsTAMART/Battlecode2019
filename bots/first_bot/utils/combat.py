@@ -107,8 +107,22 @@ class CombatManager(object):
                         self.attackable_by_allies.append(enemy)
                         break
 
+        # Debug
+        # self.log_lists(bc)
+
     # TODO list of methods
-    # lowest health enemy
+
+    def lowest_health_enemy(self):
+        min_health = 10000
+        enemy = None
+        for r in self.attackable:
+            if r.health < min_health:
+                min_health = r.health
+                enemy = r
+        return enemy
+
+    def get_deposit(self):
+        return self.my_castles
     # Give (target)
 
     def _reset_lists(self):
@@ -124,5 +138,19 @@ class CombatManager(object):
         self.attackable = []
         self.attackable_by_allies = []
         self.i_am_attackable = []
+
+    def log_lists(self, bc):
+        bc.log('my_castles: {}'.format(len(self.my_castles)))
+        bc.log('my_military: {}'.format(len(self.my_military)))
+        bc.log('my_civil: {}'.format(len(self.my_civil)))
+        bc.log('my_signaling_units: {}'.format(len(self.my_signaling_units)))
+        bc.log('enemy_castles: {}'.format(len(self.enemy_castles)))
+        bc.log('enemy_military: {}'.format(len(self.enemy_military)))
+        bc.log('enemy_civil: {}'.format(len(self.enemy_civil)))
+        bc.log('enemy_signaling_units: {}'.format(len(self.enemy_signaling_units)))
+        bc.log('attackable: {}'.format(len(self.attackable)))
+        bc.log('attackable_by_allies: {}'.format(len(self.attackable_by_allies)))
+        bc.log('i_am_attackable: {}'.format(len(self.i_am_attackable)))
+
 
 #

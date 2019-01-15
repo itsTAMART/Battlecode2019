@@ -23,24 +23,28 @@ def first_turn_pilgrim(self):
 
 
 def pilgrim(self):
+    """ Basic PILGRIM: mine then, come back to deposit"""
     # Run combat/give code
     # Run nav code
     # Run mining code
 
     self.combat.turn(self)
 
-    # unit_specs = SPECS['UNITS'][self.me.unit]
-    #
-    # # FULL OF KARBONITE
-    # if self.me.karbonite == unit_specs['KARBONITE_CAPACITY']:
-    #     # self.destination = self.spawn_loc # Destination represents your mine
-    #     self.nav.set_destination(self.spawn_loc)
-    #
-    #     if self.me.x == self.spawn.loc[0] and self.me.y == self.spawn.loc[1]:
-    #         # AT SPAWN
-    #         pass  #
-    #     # if can_give(self):
+    # FULL OF KARBONITE
+    if full_of_karb(self):
+        # self.destination = self.spawn_loc # Destination represents your mine
+        self.nav.set_destination(self.spawn_loc)
 
+        # if im_at(self, self.spawn_loc):
+        #     # AT SPAWN
+        for castle in self.combat.get_deposit():
+            if can_give(self, castle):
+                # GIVE the material
+                self.log('Direction to give {}'.format(direction_to(locate(self.me), locate(castle))))
+                self.log('Karb and fuel given {}, {}'.format(self.me.karbonite, self.me.fuel))
+                self.nav.set_destination(self.destination)  # GO BACK TO THE MINE
+                return self.give(*direction_to(locate(self.me), locate(castle)),
+                                 self.me.karbonite, self.me.fuel)
 
     moving_dir = self.nav.next_tile(self)
     self.log('moving dir: {}'.format(moving_dir))  # Move to closest non-occupied mine
@@ -55,29 +59,7 @@ def pilgrim(self):
         return self.move(*moving_dir)
 
 
-    # # Mine till full, (temporarily) come back
 
-    """
-    
-    EXAMPLEFUNKY CODE
-    
-    elif self.me['unit'] == SPECS['PILGRIM']:
-    if self.destination is None:
-        # find nearest karbonite
-        self.destination = self.find_nearest(self.karbonite_map, (self.me['x'], self.me['y']))
-        # self.log('I have a destination! ' + str(self.destination))
-    if self.karbonite_map[self.me['y']][self.me['x']]:
-        # on karbonite!
-        if self.me.karbonite == SPECS['UNITS'][SPECS["PILGRIM"]]['KARBONITE_CAPACITY']:
-            self.destination = self.spawnloc
-        else:
-            # self.log('MINING!')
-            return self.mine()
-
-    my_coord = (self.me['x'], self.me['y'])
-    return self.move(*nav.goto(my_coord, self.destination, self.map, visible_robot_map, self.already_been))
-    
-    """
 
 
 

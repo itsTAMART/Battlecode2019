@@ -106,26 +106,40 @@ def can_mine(bc, x, y):
     return False
 
 
-def can_give(bc, dx, dy):
+#
+# def can_give(bc, dx, dy):
+#     """ bc is the battlecode object"""
+#     # Find if dx,dy can be given materials
+#     unit_specs = SPECS['UNITS'][bc.me.unit]
+#     fuel_capacity = unit_specs['FUEL_CAPACITY']
+#     karb_capacity = unit_specs['KARBONITE_CAPACITY']
+#     loc = (bc.me.x, bc.me.y)
+#     my_team = bc.me.team
+#     # Si tienes algun material
+#     if bc.me.karbonite > 0 or bc.me.fuel > 0:
+#         # Si hay un robot en dx, dy
+#         for robot in bc.vision_list:
+#             if robot.team == my_team and \
+#                     robot.x == loc[0] + dx and \
+#                     robot.y == loc[1] + dy:
+#                 # Si tiene capacidad restante
+#                 if robot.karbonite < karb_capacity and \
+#                         robot.fuel < fuel_capacity:
+#                     return True
+#     # Return true
+#
+#     return False
+
+
+def can_give(bc, castle):
     """ bc is the battlecode object"""
     # Find if dx,dy can be given materials
-    unit_specs = SPECS['UNITS'][bc.me.unit]
-    fuel_capacity = unit_specs['FUEL_CAPACITY']
-    karb_capacity = unit_specs['KARBONITE_CAPACITY']
-    loc = (bc.me.x, bc.me.y)
-    my_team = bc.me.team
+    x, y = bc.me.x, bc.me.y
+    t_x, t_y = castle.x, castle.y
     # Si tienes algun material
     if bc.me.karbonite > 0 or bc.me.fuel > 0:
-        # Si hay un robot en dx, dy
-        for robot in bc.vision_list:
-            if robot.team == my_team and \
-                    robot.x == loc[0] + dx and \
-                    robot.y == loc[1] + dy:
-                # Si tiene capacidad restante
-                if robot.karbonite < karb_capacity and \
-                        robot.fuel < fuel_capacity:
-                    return True
-    # Return true
+        # Is adjacent?
+        return (x - t_x) ** 2 < 2 and (y - t_y) ** 2 < 2
 
     return False
 
@@ -209,6 +223,16 @@ def team(robot):
     return robot['team']
 
 
+def locate(robot):
+    return (robot.x, robot.y)
+
+
+def full_of_karb(self):
+    unit_specs = SPECS['UNITS'][self.me.unit]
+    return self.me.karbonite == unit_specs['KARBONITE_CAPACITY']
+
+
+
 def is_attackable(bc_object, robot):
     """ Check if you can attack the robot included fuel cost etc."""
     return can_attack(bc_object, robot.x, robot.y)
@@ -234,6 +258,17 @@ def is_attackable_unit(robot_1, robot_2):
             # Within attack range ?
             return is_in_range(robot_1, robot_2.x, robot_2.y, unit_specs_1['ATTACK_RADIUS'][1]) \
                    and not is_in_range(robot_1, robot_2.x, robot_2.y, unit_specs_1['ATTACK_RADIUS'][0])
+
+
+def im_at(bc, location):
+    """
+    Check if you are at specified position
+    :param bc: battlecode object
+    :param location: tuple of (x, y)
+    :return: True if standing at that position
+    """
+    return bc.me.x == location[0] and bc.me.y == location[1]
+
 
 
 

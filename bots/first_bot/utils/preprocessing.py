@@ -45,9 +45,40 @@ def find_nearest(self, mapa, location, excluding=[]):
                 if not loc_in_list(newc, excluding):
                     # not from the excluded ones
                     q.append(newc)
-        current = q[i_q]
+        current = q[i_q]  # Equivalent to pop
         i_q += 1
     return current
+
+
+# TODO test use cases
+def find_all(self, mapa, location):
+    """
+    Method used to find the all mines, for example
+    :param self: battlecode object
+    :param mapa: map the format bc uses it map[y][x]
+    :param location: (tuple) the position in a tuple (x, y)
+    :return: (tuple) closest location (x, y)
+    """
+    # TODO mark the distance at which they are
+    target = []
+    visited = []
+    q = []
+    i_q = 0
+    current = location
+    while i_q < len(q):
+        visited.append(current)
+        if mapa[current[1]][current[0]]:
+            # Found one
+            target.append(current)
+        for x, y in passable_adjacent_tiles(self, current[0], current[1]):
+            newc = (x, y)
+            if not loc_in_list(newc, visited):
+                # Not visited
+                q.append(newc)
+
+        current = q[i_q]  # Equivalent to pop
+        i_q += 1
+    return target
 
 
 # TODO create a method to gather info of the map, size, type, n_castles etc..
