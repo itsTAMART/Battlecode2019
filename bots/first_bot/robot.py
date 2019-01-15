@@ -39,6 +39,7 @@ class MyRobot(BCAbstractRobot):
     # Helper Objects
     build_order = None
     nav = None
+    combat = None
 
 
     def turn(self):

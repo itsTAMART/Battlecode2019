@@ -97,7 +97,7 @@ def apply_dir(loc, dir):
 
 def goto(loc, target, full_map, robot_map, already_been):
     goal_dir = calculate_dir(loc, target)
-    if goal_dir is (0, 0):
+    if goal_dir[0] == goal_dir[1] == 0:
         return (0, 0)
     # self.log("MOVING FROM " + str(my_coord) + " TO " + str(nav.dir_to_coord[goal_dir]))
     i = 0

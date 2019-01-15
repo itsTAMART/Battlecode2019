@@ -124,18 +124,18 @@ def rotate(orig_dir, amount):
     return direction
 
 
-def goto(bc, target):
+def goto(bc_object, target):
     """
 
-    :param bc: battlecode object
+    :param bc_object: battlecode object
     :param target: tuple target location
     :return:
     """
     # bc.log('entering goto')
-    loc = (bc.me.x, bc.me.y)
+    loc = (bc_object.me.x, bc_object.me.y)
     # bc.log('line 1')
     goal_dir = direction_to(loc, target)
-    bc.log('Goal dir: {}'.format(goal_dir))
+    bc_object.log('Goal dir: {}'.format(goal_dir))
     # bc.log('loc: {}'.format(loc))
     if goal_dir[0] == goal_dir[1] == 0:  # goal_dir == (0, 0):
         # bc.log('goal dir is 0,0')
@@ -146,7 +146,7 @@ def goto(bc, target):
     i = 0
     # bc.log(loc)
     # bc.log(goal_dir)
-    while is_occupied(bc, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) and i < 4:
+    while is_occupied(bc_object, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) and i < 4:
         # TODO make it able to bug
         # or apply_dir(loc, goal_dir) in already_been: # doesn't work because `in` doesn't work :(
         # alternate checking either side of the goal dir, by increasing amounts (but not past directly backwards)
@@ -171,7 +171,7 @@ class Navigation(object):
 
     visited = []
 
-    def __init__(self, robot_object, destination=None):
+    def __init__(self, destination=None):
         self.destination = destination
         # self.origin = (robot_object.me.x, robot_object.me.y)
         # self.passable_map = robot_object.passable_map

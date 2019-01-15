@@ -15,25 +15,31 @@ def first_turn_pilgrim(self):
     self.log('My mine in: {}'.format(my_mine))
 
     # Initialize Navigation and set the objective to the mine
-    self.nav = Navigation(self, my_mine)
+    self.nav = Navigation(my_mine)
+    self.combat = CombatManager(self)
     self.destination = my_mine
     self.spawn_loc = location
     return
 
 
 def pilgrim(self):
-    unit_specs = SPECS['UNITS'][bc.me.unit]
+    # Run combat/give code
+    # Run nav code
+    # Run mining code
 
-    # FULL OF KARBONITE
-    if self.me.karbonite == unit_specs['KARBONITE_CAPACITY']:
-        # self.destination = self.spawn_loc # Destination represents your mine
-        self.nav.set_destination(self.spawn_loc)
+    self.combat.turn(self)
 
-        if self.me.x == self.spawn.loc[0] and self.me.y == self.spawn.loc[1]:
-            # AT SPAWN
-            pass  # # TODO left here RECORRER VISIBLES Y GIVE SI ES UN CASTLE
-        # if can_give(self):
-
+    # unit_specs = SPECS['UNITS'][self.me.unit]
+    #
+    # # FULL OF KARBONITE
+    # if self.me.karbonite == unit_specs['KARBONITE_CAPACITY']:
+    #     # self.destination = self.spawn_loc # Destination represents your mine
+    #     self.nav.set_destination(self.spawn_loc)
+    #
+    #     if self.me.x == self.spawn.loc[0] and self.me.y == self.spawn.loc[1]:
+    #         # AT SPAWN
+    #         pass  #
+    #     # if can_give(self):
 
 
     moving_dir = self.nav.next_tile(self)

@@ -42,17 +42,17 @@ def is_not_occupied(bc, x, y):
 
 
 # TODO test
-def is_in_range(bc, x, y, range_squared):
+def is_in_range(robot, x, y, range_squared):
     """
     Check if a target is within SQUARED range of the robot
-    :param bc: battlecode object
+    :param robot: robot object eg bc.me
     :param x: target_x
     :param y: target_y
     :param range: true range**2
     :return: True if it is in range, False if not
     """
-    my_x = bc.me.x
-    my_y = bc.me.y
+    my_x = robot.x
+    my_y = robot.y
     dx = my_x - x
     dy = my_y - y
 
@@ -78,13 +78,13 @@ def can_build(bc, unit_name, x, y):
     # self.log('Karb_c: {}, Fuel_c: {}'.format(karb_cost, fuel_cost))
 
     valid_cost = (karb >= karb_cost) and (fuel >= fuel_cost)
-    bc.log('cost_ok: {}'.format(valid_cost))
+    # bc.log('cost_ok: {}'.format(valid_cost))
 
     if valid_cost:
         # Enough Karb and Fuel
         # Check if occupied
         occupied = is_not_occupied(bc, x, y)
-        bc.log('is not occupied?: {}'.format(occupied))
+        # bc.log('is not occupied?: {}'.format(occupied))
         return occupied
 
     # Not enough currency
@@ -153,7 +153,7 @@ def can_move(bc, x, y):
         return False
 
     # Is it in range?
-    if not is_in_range(bc, x, y, unit_specs['SPEED']):
+    if not is_in_range(bc.me, x, y, unit_specs['SPEED']):
         # Not in range
         return False
 
@@ -181,10 +181,9 @@ def can_attack(bc, x, y):
 
     # Is it in range?
     in_range = False
-    if not is_in_range(bc, x, y, unit_specs['ATTACK_RADIUS'][0]):
+    if is_in_range(bc.me, x, y, unit_specs['ATTACK_RADIUS'][1]):
         # Check outside small range, then inside big one
-        in_range = is_in_range(bc, x, y, unit_specs['ATTACK_RADIUS'][1])
-
+        in_range = not is_in_range(bc.me, x, y, unit_specs['ATTACK_RADIUS'][0])
     return in_range
 
 
@@ -204,6 +203,38 @@ def naive_build(bc, unit_name):
             bc.log("Building a {} at [{}, {}]".format(unit_name, bc.me['x'] + dx, bc.me['y'] + dy))
             return bc.build_unit(SPECS[unit_name], dx, dy)
     return None
+
+
+def team(robot):
+    return robot['team']
+
+
+def is_attackable(bc_object, robot):
+    """ Check if you can attack the robot included fuel cost etc."""
+    return can_attack(bc_object, robot.x, robot.y)
+
+
+def am_i_attackable(bc_object, robot):
+    """ can I get attacked by robot """
+    # is it an attacking unit
+    u_specs = SPECS['UNITS'][robot.unit]
+    if u_specs['ATTACK_DAMAGE'] is not None:
+        # Within attack range
+        return is_in_range(bc_object.me, robot.x, robot.y, u_specs['ATTACK_RADIUS'][1]) \
+               and not is_in_range(bc_object.me, robot.x, robot.y, u_specs['ATTACK_RADIUS'][0])
+    return False
+
+
+def is_attackable_unit(robot_1, robot_2):
+    """ check if robot 1 can attack robot 2"""
+    unit_specs_1 = SPECS['UNITS'][robot_1.unit]
+    if robot_1 and robot_2:
+        # is it an attacking unit ?
+        if unit_specs_1['ATTACK_DAMAGE'] is not None:
+            # Within attack range ?
+            return is_in_range(robot_1, robot_2.x, robot_2.y, unit_specs_1['ATTACK_RADIUS'][1]) \
+                   and not is_in_range(robot_1, robot_2.x, robot_2.y, unit_specs_1['ATTACK_RADIUS'][0])
+
 
 
 def fast_distance(a, b):
