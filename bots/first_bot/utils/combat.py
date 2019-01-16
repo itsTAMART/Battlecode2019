@@ -110,28 +110,38 @@ class CombatManager(object):
         # Debug
         self.log_lists(bc)
 
-    # TODO list of methods
+    # # Yay, coding for things that cannot be done
+    # def lowest_health_enemy(self):
+    #     min_health = 10000
+    #     enemy = None
+    #     for r in self.attackable:
+    #         if r.health < min_health:
+    #             min_health = r.health
+    #             enemy = r
+    #     return enemy
 
     def lowest_health_enemy(self):
         min_health = 10000
         enemy = None
+        unit_specs = SPECS['UNITS']
         for r in self.attackable:
-            if r.health < min_health:
-                min_health = r.health
+            hp = unit_specs[r.unit]['STARTING_HP']
+            if hp < min_health:
+                min_health = hp
                 enemy = r
         return enemy
 
-    # TODO test
     def closest_visible_enemy(self, bc):
-        enemies = self.enemy_castles + self.enemy_military + self.enemy_civil  # TODO the problem is here
-        bc.log(enemies)  # Debug TODO en el log pone que es un object
+        enemies_lists = [self.enemy_castles, self.enemy_military, self.enemy_civil] 
         min_dist = 10000
         enemy = None
-        for r in enemies:
-            dist = distance(locate(bc.me), locate(r))
-            if dist < min_dist:
-                min_dist = dist
-                enemy = r
+        for lista in enemies_lists:
+            for r in lista:
+                # bc.log(r)
+                dist = distance(locate(bc.me), locate(r))
+                if dist < min_dist:
+                    min_dist = dist
+                    enemy = r
         return enemy
 
     def get_deposit(self):
