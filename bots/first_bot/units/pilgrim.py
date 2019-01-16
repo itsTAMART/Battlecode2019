@@ -19,6 +19,13 @@ def first_turn_pilgrim(self):
     self.combat = CombatManager(self)
     self.destination = my_mine
     self.spawn_loc = location
+
+    self.combat.turn(self)
+    if len(self.combat.my_civil) > 0:
+        excluded_mines = [my_mine]
+        my_mine = find_nearest(self, self.karbonite_map, location, excluded_mines)
+        self.nav = Navigation(my_mine)
+        self.destination = my_mine
     return
 
 

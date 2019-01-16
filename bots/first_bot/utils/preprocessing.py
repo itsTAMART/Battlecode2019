@@ -7,6 +7,16 @@ from ..utils import *
 
 
 # EXAMPLEFUNKY CODE
+# TODO continue Here
+def reflect(full_map, loc, horizontal=True):
+    map_size = [len(full_map), len(full_map[0])]
+    v_reflec = (map_size[1] - loc[0], loc[1])
+    h_reflec = (loc[0], map_size[0] - loc[1])
+    if horizontal:
+        return h_reflec if full_map[h_reflec[1]][h_reflec[0]] else v_reflec
+    else:
+        return v_reflec if full_map[v_reflec[1]][v_reflec[0]] else h_reflec
+
 
 def loc_in_list(elemento, lista):
     """
