@@ -78,6 +78,7 @@ class MapPreprocess(object):
     passable_tiles = 0
     passable_pct = -1
     horizontal_reflection = True
+    n_castles = 1
     my_castles = []
     enemy_castles = []
     karb_mines = []
@@ -89,6 +90,7 @@ class MapPreprocess(object):
         self.map_size = len(bc.passable_map[0])
         self.find_all_mines(bc)
         self.horizontal_reflection = self.is_horizontal_reflect()
+        self.get_n_castles()
 
     def find_all_mines(self, bc):
         passable_tiles = 0
@@ -122,6 +124,12 @@ class MapPreprocess(object):
         else:
             return True
 
+    def get_n_castles(self, bc):
+        """ gets the number of castles, not the coords"""
+        if bc.me.unit == SPECS['CASTLE']:
+            self.n_castles = len(bc.vision_list)
+
+
     def reflect_enemy_castles(self, bc):
         # TODO do not use yet, until you know the location of castles
         """ call after horizontal reflection is known, and castles known"""
@@ -130,13 +138,14 @@ class MapPreprocess(object):
 
     def log_lists(self, bc):
         bc.log('map_size: {}'.format(self.map_size))
+        bc.log('n_castles: {}'.format(self.n_castles))
         bc.log('passable_size: {}'.format(self.passable_tiles))
         bc.log('passable_pct: {0:.2f}'.format(self.passable_pct))
         bc.log('horizontal reflect: {}'.format(self.horizontal_reflection))
         bc.log('n_karb_mines: {}'.format(len(self.karb_mines)))
-        bc.log('karb_mines: {}'.format(self.karb_mines))
+        # bc.log('karb_mines: {}'.format(self.karb_mines))
         bc.log('n_fuel_mines: {}'.format(len(self.fuel_mines)))
-        bc.log('fuel_mines: {}'.format(self.fuel_mines))
+        # bc.log('fuel_mines: {}'.format(self.fuel_mines))
 
 
 
