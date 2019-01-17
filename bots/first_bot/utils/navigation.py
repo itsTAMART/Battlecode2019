@@ -72,7 +72,7 @@ def my_loc(self):
 #     """
 #     return robot.x, robot.y
 
-def diference_to(origin, destination):
+def difference_to(origin, destination):
     """
 
     :param origin: location

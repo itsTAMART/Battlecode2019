@@ -14,7 +14,7 @@ def is_occupied(bc, x, y):
     :param y: y position
     :return: True if occupied False if not occupied
     """
-    map_size = bc.game_info['map_size']
+    map_size = len(bc.passable_map)
     if (x >= 0) and (y >= 0) and (x <= map_size) and (y <= map_size):
         # It is inside the map
         if bc.passable_map[y][x] > 0:
@@ -48,7 +48,7 @@ def is_in_range(robot, x, y, range_squared):
     :param robot: robot object eg bc.me
     :param x: target_x
     :param y: target_y
-    :param range: true range**2
+    :param range_squared: true range**2
     :return: True if it is in range, False if not
     """
     my_x = robot.x
@@ -106,7 +106,7 @@ def can_mine(bc, x, y):
     return False
 
 
-#
+# # You cannot check other's unit karb and fuel
 # def can_give(bc, dx, dy):
 #     """ bc is the battlecode object"""
 #     # Find if dx,dy can be given materials
@@ -144,7 +144,6 @@ def can_give(bc, castle):
     return False
 
 
-# TODO test
 def can_move(bc, x, y):
     """
     Check if the robot can move to that tile by fuel, range and occupied.
@@ -176,7 +175,6 @@ def can_move(bc, x, y):
     return occupied
 
 
-# TODO test
 def can_attack(bc, x, y):
     """
     Check if the robot can attack the tile
@@ -201,7 +199,6 @@ def can_attack(bc, x, y):
     return in_range
 
 
-# TODO test
 def naive_build(bc, unit_name):
     """
     tries to build around
@@ -230,7 +227,6 @@ def locate(robot):
 def full_of_karb(self):
     unit_specs = SPECS['UNITS'][self.me.unit]
     return self.me.karbonite == unit_specs['KARBONITE_CAPACITY']
-
 
 
 def is_attackable(bc_object, robot):
@@ -274,14 +270,31 @@ def im_at(bc, location):
     return bc.me.x == location[0] and bc.me.y == location[1]
 
 
+# EXAMPLEFUNKY CODE
+
+def reflect(bc, loc, horizontal=True):
+    map_size = len(bc.passable_map)
+    v_reflec = [map_size - loc[0], loc[1]]
+    h_reflec = [loc[0], map_size - loc[1]]
+    if horizontal:
+        return h_reflec
+    else:
+        return v_reflec
 
 
-def fast_distance(a, b):
+# EXAMPLEFUNKY CODE
+def loc_in_list(elemento, lista):
     """
-    Fast computation of distance using sqrt_einsum(self, x,y)
-    :param a: points a as rows
-    :param b: points b as rows
-    :return: distance between a and b points
+    Equivalent to [if elemento in lista:]
+    :param elemento:
+    :param lista:
+    :return:
     """
-    a_min_b = a - b
-    return np.sqrt(np.einsum('ij,ij->i', a_min_b, a_min_b))
+    if len(lista) < 1:
+        return False
+    for e in lista:
+        if e[0] == elemento[0] and e[1] == elemento[1]:
+            return True
+    return False
+
+#

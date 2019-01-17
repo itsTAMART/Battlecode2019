@@ -23,6 +23,7 @@ class MyRobot(BCAbstractRobot):
     vision_map = []
     passable_map = []
     karbonite_map = []
+    fuel_map = []
 
     # Unit Variables
     destination = None
@@ -40,6 +41,7 @@ class MyRobot(BCAbstractRobot):
     build_order = None
     nav = None
     combat = None
+    map_process = None
 
 
     def turn(self):
@@ -60,8 +62,9 @@ class MyRobot(BCAbstractRobot):
             """
             self.passable_map = self.get_passable_map()
             self.karbonite_map = self.get_karbonite_map()
+            self.fuel_map = self.get_fuel_map()
 
-            self.game_info = get_initial_game_info(self)
+            # self.game_info = get_initial_game_info(self)
 
             first_turn_monitor(self)  # Log firs turn info
 

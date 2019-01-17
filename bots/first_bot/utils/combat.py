@@ -107,8 +107,8 @@ class CombatManager(object):
                         self.attackable_by_allies.append(enemy)
                         break
 
-        # Debug
-        self.log_lists(bc)
+        # # Debug
+        # self.log_lists(bc)
 
     # # Yay, coding for things that cannot be done
     # def lowest_health_enemy(self):
@@ -132,7 +132,7 @@ class CombatManager(object):
         return enemy
 
     def closest_visible_enemy(self, bc):
-        enemies_lists = [self.enemy_castles, self.enemy_military, self.enemy_civil] 
+        enemies_lists = [self.enemy_castles, self.enemy_military, self.enemy_civil]
         min_dist = 10000
         enemy = None
         for lista in enemies_lists:

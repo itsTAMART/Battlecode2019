@@ -27,7 +27,7 @@ def crusade(self):
             self.log(locate(self.me))
             self.log(locate(target))  # TODO testing
 
-            return self.attack(*diference_to(locate(self.me), locate(target)))
+            return self.attack(*difference_to(locate(self.me), locate(target)))
 
     # AGGRESSIVE BEHAVIOUR
     aggression_target = self.combat.closest_visible_enemy(self)
