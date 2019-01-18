@@ -156,6 +156,7 @@ class MapPreprocess(object):
         bc.log('passable_pct: {}%'.format(int(self.passable_pct * 100)))
         bc.log('horizontal reflect: {}'.format(self.horizontal_reflection))
         bc.log('n_karb_mines: {}'.format(len(self.karb_mines)))
+        bc.log('karb_mines: {}'.format(self.karb_mines))
         bc.log('n_fuel_mines: {}'.format(len(self.fuel_mines)))
         bc.log('my castles: {}'.format(self.my_castles))
         bc.log('enemy_castles: {}'.format(self.enemy_castles))

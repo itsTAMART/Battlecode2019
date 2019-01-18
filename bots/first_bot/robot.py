@@ -69,6 +69,15 @@ class MyRobot(BCAbstractRobot):
 
             first_turn_monitor(self)  # Log firs turn info
 
+            # Helper objects
+            self.comms = Communications(self)
+            self.map_process = MapPreprocess()
+            self.nav = Navigation()
+            self.combat = CombatManager(self)
+            self.map_process.get_initial_game_info(self)
+
+
+
             """
 
             SPECIFIC FIRST TURN

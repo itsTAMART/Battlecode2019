@@ -7,8 +7,8 @@ from ..utils import *
 
 def first_turn_crusader(self):
     # TODO do tings like choosing which castle you represent with the map
-    self.nav = Navigation()
-    self.combat = CombatManager(self)
+    # self.nav = Navigation()
+    # self.combat = CombatManager(self)
     self.spawn_loc = locate(self.me)
     # TODO find first castle
     self.destination = None

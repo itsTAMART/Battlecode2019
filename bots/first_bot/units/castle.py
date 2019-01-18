@@ -10,9 +10,9 @@ from ..tactics import *
 def first_turn_castle(self):
     # TODO do tings like choosing which castle you represent with the map
     self.build_order = BuildOrderManager(BUILD_ORDER)
-    self.map_process = MapPreprocess()
-    self.comms = Communications(self)
-    self.map_process.get_initial_game_info(self)
+    # self.map_process = MapPreprocess()
+    # self.comms = Communications(self)
+    # self.map_process.get_initial_game_info(self)
     # Debug
     self.map_process.log_lists(self)
 

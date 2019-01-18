@@ -8,6 +8,10 @@ class Communications(object):
     """
     manages communications between robots
 
+
+        Locations sent in signals as CODE[4bits]+X[6bits]+Y[6bits]
+
+
     """
     # First turn Flags
     sent_first_part = False
@@ -19,13 +23,26 @@ class Communications(object):
         self.my_team = team(bc.me)
 
     def turn(self, bc):
+        signaling = []
+        for r in bc.vision_list:
+            if bc.is_signaling(r):
+                signaling.append(r)
+        return signaling
+
+
+
+
+
         pass  # TODO
 
-    def send_loc(self, bc):
+    def send_loc(self, bc, loc, radius):
         pass  # TODO
 
-    def receive_loc(self, bc):
-        pass  # TODO
+    def receive_loc(self, bc, robot=None, message=None):
+        if robot is not None:
+            pass
+        if message is not None:
+            pass  # TODO
 
     def send_castle_talk(self, bc, message):
         bc.castle_talk(int(message) % 256)
@@ -139,13 +156,6 @@ class Communications(object):
 
             return
 
-    # # If map is horizontally reflected:
-    # if bc.map_process.horizontal_reflection:
-    #     # send first x
-    #  #  If map is vertically reflected :
-    # else:
-    #     # send first y
-    #     y = self.receive_castle_talk(bc)
 
     def _reset_lists(self):
         """ resets all lists for each turn """

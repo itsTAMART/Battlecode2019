@@ -14,9 +14,9 @@ def first_turn_pilgrim(self):
     my_mine = find_nearest(self, self.karbonite_map, location, excluded_mines)
     self.log('My mine in: {}'.format(my_mine))
 
-    # Initialize Navigation and set the objective to the mine
-    self.nav = Navigation(my_mine)
-    self.combat = CombatManager(self)
+    #  set the objective to the mine
+
+    self.nav.set_destination(my_mine)
     self.destination = my_mine
     self.spawn_loc = location
     return
