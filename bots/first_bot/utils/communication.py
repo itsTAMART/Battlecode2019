@@ -9,8 +9,11 @@ class Communications(object):
     manages communications between robots
 
     """
+    # First turn Flags
     sent_first_part = False
     received_first_part = False
+    first_turn_coords = {}
+    castle_coords = []
 
     def __init__(self, bc):
         self.my_team = team(bc.me)
@@ -25,41 +28,49 @@ class Communications(object):
         pass  # TODO
 
     def send_castle_talk(self, bc, message):
-        pass  # TODO
+        bc.castle_talk(int(message) % 256)
 
-    def receive_castle_talk(self, bc):
-        pass  # TODO
+    def receive_castle_talk(self, robot):
+        """
+        recieve the castle talk and the id
+        :param robot: robot object recieved from the vision list
+        :return: the castle talk AND  the robot id
+        """
+        return robot.castle_talk, robot.id
 
     def send_initial_castle_location(self, bc):
         """ sends initial castle location in 2 steps"""
+
         # If im a castle
+        # In the first 3 turns
+        # Has it sended a first time? No:
+        # If map is horizontally reflected:
+        # send first x
+        #  If map is vertically reflected :
+        # send first y
+        #   save a flag for first sent
+        # Yes:when called again
+        # If map is horizontally reflected:
+        # send first y
+        #  If map is vertically reflected :
+        # send first x
         if bc.me.unit != SPECS['CASTLE']:
             return
-        # In the first 3 turns
-        if bc.turn > 4:
+        if bc.step > 3:
             return
-        # Has it sended a first time? No:
         if not self.sent_first_part:
-            # If map is horizontally reflected:
+            bc.log('sending first part')
             if bc.map_process.horizontal_reflection:
-                # send first x
                 self.send_castle_talk(bc, bc.me.x)
-            #  If map is vertically reflected :
             else:
-                # send first y
                 self.send_castle_talk(bc, bc.me.y)
-            #   save a flag for first sent
             self.sent_first_part = True
 
-        # Yes:when called again
         else:
-            # If map is horizontally reflected:
+            bc.log('sending second part')
             if bc.map_process.horizontal_reflection:
-                # send first y
                 self.send_castle_talk(bc, bc.me.y)
-            #  If map is vertically reflected :
             else:
-                # send first x
                 self.send_castle_talk(bc, bc.me.x)
         return
 
@@ -76,37 +87,65 @@ class Communications(object):
         #   If map is vertically reflected :receive x
         #
 
-        # TODO do it
-        x, y = -1, -1
+        signaling = [robot for robot in bc.get_visible_robots() if (not bc.is_visible(robot))]
 
         if bc.me.unit != SPECS['CASTLE']:
+            # bc.log('not a castle')
             return
         # In the first 3 turns
-        if bc.turn > 4:
+        if bc.step > 4:
+            # bc.log('not first turns')
             return
-        # Has it sended a first time? No:
-        if not self.received_first_part:
-            # If map is horizontally reflected:
-            if bc.map_process.horizontal_reflection:
-                # send first x
-                x = self.receive_castle_talk(bc)
-            #  If map is vertically reflected :
-            else:
-                # send first y
-                y = self.receive_castle_talk(bc)
-            #   save a flag for first sent
-            self.received_first_part = True
 
-        # Yes:when called again
-        else:
-            # If map is horizontally reflected:
-            if bc.map_process.horizontal_reflection:
-                # send first y
-                y = self.receive_castle_talk(bc)
-            #  If map is vertically reflected :
+        for robot in signaling:
+            # if robot.unit is not None:
+            #     bc.log('not the castle we lookin for')
+            #     bc.log(robot)
+            #     continue
+
+            # bc.log('for this robot:')
+            # bc.log(robot)
+            #
+            # bc.log('first turn coords: {}'.format(self.first_turn_coords))
+
+            coord, id = self.receive_castle_talk(robot)
+            if coord == 0:
+                # bc.log('not valid coord_1')
+                continue
+
+            if id not in self.first_turn_coords:
+                bc.log('receiving first part')
+                bc.log('coord_1: {}'.format(coord))
+                self.first_turn_coords[id] = coord
+
+            # Yes:when called again
             else:
-                x = self.receive_castle_talk(bc)
-        return
+                bc.log('receiving second part')
+                # If map is horizontally reflected:
+                if bc.map_process.horizontal_reflection:
+                    bc.log('horizontal map')
+                    castle_cord = (self.first_turn_coords[id], coord)
+                    if not loc_in_list(castle_cord, self.castle_coords):
+                        self.castle_coords.append(castle_cord)
+                #  If map is vertically reflected :
+                else:
+                    bc.log('vertical map')
+                    castle_cord = (coord, self.first_turn_coords[id])
+                    if not loc_in_list(castle_cord, self.castle_coords):
+                        self.castle_coords.append(castle_cord)
+
+                # bc.log('first turn coords: {}'.format(self.first_turn_coords))
+                bc.log('recieved coords: {}'.format(castle_cord))
+
+            return
+
+    # # If map is horizontally reflected:
+    # if bc.map_process.horizontal_reflection:
+    #     # send first x
+    #  #  If map is vertically reflected :
+    # else:
+    #     # send first y
+    #     y = self.receive_castle_talk(bc)
 
     def _reset_lists(self):
         """ resets all lists for each turn """

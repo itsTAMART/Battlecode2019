@@ -3,10 +3,10 @@ TYPES = ["CASTLE", "CHURCH", "PILGRIM", "CRUSADER", "PROPHET", "PREACHER"]
 
 
 def first_turn_monitor(self):
-    # # TODO do it
     # self.log('Map size {}x{}'.format(self.game_info['map_size'],
     #                                  self.game_info['map_size']))
-    self.log('# TODO first_turn_monitor')
+    # self.log('# TODO first_turn_monitor')
+    pass
 
 
 def unit_monitor(self):

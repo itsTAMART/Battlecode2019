@@ -42,6 +42,7 @@ class MyRobot(BCAbstractRobot):
     nav = None
     combat = None
     map_process = None
+    comms = None
 
 
     def turn(self):

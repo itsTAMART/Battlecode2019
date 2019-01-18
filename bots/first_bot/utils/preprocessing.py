@@ -3,9 +3,7 @@ from battlecode import BCAbstractRobot, SPECS
 import battlecode as bc
 import random
 
-from ..utils import *
-
-
+from bots.first_bot.utils import *
 
 
 def find_nearest(self, mapa, location, excluding=[]):
@@ -79,6 +77,7 @@ class MapPreprocess(object):
     passable_pct = -1
     horizontal_reflection = True
     n_castles = 1
+    my_castle_ids = []
     my_castles = []
     enemy_castles = []
     karb_mines = []
@@ -90,7 +89,11 @@ class MapPreprocess(object):
         self.map_size = len(bc.passable_map[0])
         self.find_all_mines(bc)
         self.horizontal_reflection = self.is_horizontal_reflect()
-        self.get_n_castles()
+        self.get_n_castles(bc)
+
+    def get_initial_game_info_2(self, bc):
+        self.get_my_castles(bc)
+        self.reflect_enemy_castles(bc)
 
     def find_all_mines(self, bc):
         passable_tiles = 0
@@ -126,9 +129,19 @@ class MapPreprocess(object):
 
     def get_n_castles(self, bc):
         """ gets the number of castles, not the coords"""
+        visible = bc.get_visible_robots()
         if bc.me.unit == SPECS['CASTLE']:
-            self.n_castles = len(bc.vision_list)
+            self.n_castles = len(visible)
+        for unit in visible:
+            self.my_castle_ids.append(unit.id)
 
+    def get_my_castles(self, bc):
+        """ (ONLY CALLABLE BY A CASTLE)
+            (ONLY CALLABLE FROM TURN 3 ON)
+            get the locations of your own castles
+        """
+        self.my_castles = bc.comms.castle_coords
+        self.my_castles.append(locate(bc.me))
 
     def reflect_enemy_castles(self, bc):
         # TODO do not use yet, until you know the location of castles
@@ -140,17 +153,11 @@ class MapPreprocess(object):
         bc.log('map_size: {}'.format(self.map_size))
         bc.log('n_castles: {}'.format(self.n_castles))
         bc.log('passable_size: {}'.format(self.passable_tiles))
-        bc.log('passable_pct: {0:.2f}'.format(self.passable_pct))
+        bc.log('passable_pct: {}%'.format(int(self.passable_pct * 100)))
         bc.log('horizontal reflect: {}'.format(self.horizontal_reflection))
         bc.log('n_karb_mines: {}'.format(len(self.karb_mines)))
-        # bc.log('karb_mines: {}'.format(self.karb_mines))
         bc.log('n_fuel_mines: {}'.format(len(self.fuel_mines)))
-        # bc.log('fuel_mines: {}'.format(self.fuel_mines))
-
-
-
-
-
-
+        bc.log('my castles: {}'.format(self.my_castles))
+        bc.log('enemy_castles: {}'.format(self.enemy_castles))
 
 #
