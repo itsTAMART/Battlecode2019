@@ -43,17 +43,14 @@ class CombatManager(object):
         for r in bc.vision_list:  # For each robot visible
             # Check if is signaling and not in vision range
             if not bc.is_visible(r):
-                # TODO by now it only appends the signaling units, doesn't count them to units
                 # this robot isn't actually in our vision range,
                 # it just turned up because we heard its radio broadcast.
                 if r.team == self.my_team:
                     self.my_signaling_units.append(r)
                 else:
                     self.enemy_signaling_units.append(r)
-
-                bc.log('Signaling unit: {}'.format(TYPES[r.unit]))
-                bc.log(r)
-
+                    bc.log('Enemy signaling unit at: {}'.format((r.x, r.y)))
+                # bc.log(r)
                 continue
 
             # Check if it is your team

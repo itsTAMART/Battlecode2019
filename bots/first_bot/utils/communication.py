@@ -13,6 +13,9 @@ class Communications(object):
 
 
     """
+    # Variables to store signaling robots
+    signaling = []
+
     # First turn Flags
     sent_first_part = False
     received_first_part = False
@@ -23,26 +26,55 @@ class Communications(object):
         self.my_team = team(bc.me)
 
     def turn(self, bc):
-        signaling = []
+        """ retrieves robots signaling that turn """
         for r in bc.vision_list:
-            if bc.is_signaling(r):
-                signaling.append(r)
-        return signaling
+            if bc.is_radioing(r):
+                self.signaling.append(r)
 
+    def send_loc(self, bc, loc, sq_radius, code=0):
+        """
+        sets the emitting signal to the message
+        :param bc: battlecode object
+        :param loc: tuple (x, y)
+        :param sq_radius: squared radius of the emission
+        :param code: int only can use 4 bits
+        :return:
+        """
+        x, y = loc
+        full_loc = (x * 64) + y
+        message = (code * 4096) + full_loc
+        # Debug
+        bc.log('sending [{}] at {} radius'.format(message, sq_radius))
+        bc.signal(message, sq_radius)
 
-
-
-
-        pass  # TODO
-
-    def send_loc(self, bc, loc, radius):
-        pass  # TODO
 
     def receive_loc(self, bc, robot=None, message=None):
+        """
+         Locations sent in signals as CODE[4bits]+X[6bits]+Y[6bits]
+
+         returns code, location
+         """
+        # bc.log('robot {}, message {}'.format(robot, message))
         if robot is not None:
-            pass
-        if message is not None:
-            pass  # TODO
+            message = robot.signal
+        if message is None:
+            bc.log('error in receive_loc: no message or null robot')
+            return None, None
+        # extract location
+        full_loc = message % 4096  # the last 12 bits
+        # extract code
+        code = (message - full_loc) / 4096  # The first 4 bits
+        # separate location
+        # y the last 6 bits
+        y = full_loc % 64
+        # x the first 6 bits
+        x = (full_loc - y) / 64
+        location = (x, y)
+
+        # Debug
+        bc.log('received code for: {} at [{}] '.format(C2T[code], location))
+        return code, location
+
 
     def send_castle_talk(self, bc, message):
         bc.castle_talk(int(message) % 256)
@@ -159,7 +191,8 @@ class Communications(object):
 
     def _reset_lists(self):
         """ resets all lists for each turn """
-        pass  # TODO
+        self.signaling = []
+
 
     def log_lists(self, bc):
         # bc.log('my_castles: {}'.format(len(self.my_castles)))

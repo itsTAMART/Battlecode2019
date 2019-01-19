@@ -3,6 +3,46 @@ from battlecode import BCAbstractRobot, SPECS
 import battlecode as bc
 from bots.first_bot.utils import *
 
+C2T = {
+    0: 'YOUR_MINE_IS',
+    1: 'not_implemented_yet',
+    2: 'not_implemented_yet',
+    3: 'not_implemented_yet',
+    4: 'not_implemented_yet',
+    5: 'not_implemented_yet',
+    6: 'not_implemented_yet',
+    7: 'not_implemented_yet',
+    8: 'not_implemented_yet',
+    9: 'not_implemented_yet',
+    10: 'not_implemented_yet',
+    11: 'not_implemented_yet',
+    12: 'not_implemented_yet',
+    13: 'not_implemented_yet',
+    14: 'not_implemented_yet',
+    15: 'not_implemented_yet',
+    16: 'not_implemented_yet'
+}
+
+T2C = {
+    'YOUR_MINE_IS': 0,
+    # 'not_implemented_yet':1 ,
+    # 'not_implemented_yet':2 ,
+    # 'not_implemented_yet':3 ,
+    # 'not_implemented_yet':4 ,
+    # 'not_implemented_yet':5 ,
+    # 'not_implemented_yet':6 ,
+    # 'not_implemented_yet':7 ,
+    # 'not_implemented_yet':8 ,
+    # 'not_implemented_yet':9 ,
+    # 'not_implemented_yet':10 ,
+    # 'not_implemented_yet':11 ,
+    # 'not_implemented_yet':12 ,
+    # 'not_implemented_yet':13 ,
+    # 'not_implemented_yet':14 ,
+    # 'not_implemented_yet':15 ,
+    # 'not_implemented_yet':16
+}
+
 # For CASTLE TALK 2 ^ 8 - 1
 MESSAGE = {
     0: 'not_implemented_yet',

@@ -52,20 +52,18 @@ class MyRobot(BCAbstractRobot):
         """
         self.step += 1
 
-        if self.step == 0:  # First Turn shenanigans
-            """
+        """
     
             FIRST TURN PREPROCESS HERE   
     
             GENERAL FIRST TURN
     
     
-            """
+        """
+        if self.step == 0:  # First Turn shenanigans
             self.passable_map = self.get_passable_map()
             self.karbonite_map = self.get_karbonite_map()
             self.fuel_map = self.get_fuel_map()
-
-            # self.game_info = get_initial_game_info(self)
 
             first_turn_monitor(self)  # Log firs turn info
 
@@ -76,13 +74,22 @@ class MyRobot(BCAbstractRobot):
             self.combat = CombatManager(self)
             self.map_process.get_initial_game_info(self)
 
+        """
+        GENERAL PRE-TURN HERE
 
+        """
+        self.vision_map = self.get_visible_robot_map()
+        self.vision_list = self.get_visible_robots()
+        self.comms.turn(self)  # Turn routine for communications
+        self.combat.turn(self)  # Turn routine for classifying vision robots
+        unit_monitor(self)
 
-            """
+        """
 
             SPECIFIC FIRST TURN
 
-            """
+        """
+        if self.step == 0:  # First Turn shenanigans
             if self.me['unit'] == SPECS['CASTLE']:
                 first_turn_castle(self)
             elif self.me['unit'] == SPECS['CHURCH']:
@@ -95,17 +102,6 @@ class MyRobot(BCAbstractRobot):
                 first_turn_prophet(self)
             elif self.me['unit'] == SPECS['PREACHER']:
                 first_turn_preacher(self)
-
-
-
-
-        """
-        GENERAL PRE-TURN HERE
-
-        """
-        self.vision_map = self.get_visible_robot_map()
-        self.vision_list = self.get_visible_robots()
-        unit_monitor(self)
 
         """
 

@@ -92,6 +92,9 @@ def direction_to(origin, destination):
     :param destination:
     :return: direction
     """
+    if origin is None or destination is None:
+        return (0, 0)
+
     dx = destination[0] - origin[0]
     dy = destination[1] - origin[1]
 
@@ -118,6 +121,17 @@ def distance(origin, destination):
     dy = destination[1] - origin[1]
 
     return (dx ** 2 + dy ** 2)
+
+
+def man_distance(origin, destination):
+    """ manhattan distance
+    :param origin: location
+    :param destination:
+    :return: manhattan distance
+    """
+    dx = destination[0] - origin[0]
+    dy = destination[1] - origin[1]
+    return (abs(dx) + abs(dy))
 
 
 """

@@ -7,11 +7,13 @@ from ..utils import *
 
 
 def first_turn_pilgrim(self):
-    # TODO do tings like choosing which castle you represent with the map
-    # Find your closest mine
-    excluded_mines = []
+    # # Debug
+    # self.log(self.comms.signaling)
+
     location = (self.me.x, self.me.y)
-    my_mine = find_nearest(self, self.karbonite_map, location, excluded_mines)
+    # Find your closest mine
+    my_mine = None
+    my_mine = receive_mine(self)
     self.log('My mine in: {}'.format(my_mine))
 
     #  set the objective to the mine
@@ -27,8 +29,6 @@ def pilgrim(self):
     # Run combat/give code
     # Run nav code
     # Run mining code
-
-    self.combat.turn(self)
 
     # FULL OF KARBONITE
     if full_of_karb(self):
@@ -59,8 +59,22 @@ def pilgrim(self):
         return self.move(*moving_dir)
 
 
-
-
+def receive_mine(bc):
+    # find the castle siganl and receive it
+    for robot in bc.comms.signaling:
+        if robot.unit == SPECS['CASTLE'] or robot.unit == SPECS['CHURCH']:
+            # bc.log('robot {}, message {}'.format(robot, robot.signal))
+            code, mine = bc.comms.receive_loc(bc, robot, robot.signal)
+            bc.log('mine: {}, code: {}'.format(mine, code))
+            if code == T2C['YOUR_MINE_IS']:
+                # Debug
+                bc.log('mine received correctly')
+                return mine
+            else:
+                bc.log('not appropriate code')
+    else:
+        bc.log('no castle found')
+    bc.log('couldnt find mine')
 
 
 
