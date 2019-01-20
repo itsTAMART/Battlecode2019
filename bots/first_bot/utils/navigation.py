@@ -79,6 +79,9 @@ def difference_to(origin, destination):
     :param destination:
     :return: (destination - origin) vector
     """
+    if origin is None or destination is None:
+        return (0, 0)
+
     dx = destination[0] - origin[0]
     dy = destination[1] - origin[1]
 
@@ -117,6 +120,9 @@ def distance(origin, destination):
     :param destination:
     :return: distance squared
     """
+    if origin is None or destination is None:
+        return -1
+
     dx = destination[0] - origin[0]
     dy = destination[1] - origin[1]
 
@@ -129,6 +135,9 @@ def man_distance(origin, destination):
     :param destination:
     :return: manhattan distance
     """
+    if origin is None or destination is None:
+        return -1
+
     dx = destination[0] - origin[0]
     dy = destination[1] - origin[1]
     return (abs(dx) + abs(dy))
@@ -163,42 +172,7 @@ def rotate(orig_dir, amount):
     return direction
 
 
-def goto(bc_object, target):
-    """
 
-    :param bc_object: battlecode object
-    :param target: tuple target location
-    :return:
-    """
-    if target is None:
-        return (0, 0)
-
-    # bc.log('entering goto')
-    loc = (bc_object.me.x, bc_object.me.y)
-    # bc.log('line 1')
-    goal_dir = direction_to(loc, target)
-    bc_object.log('Goal dir: {}'.format(goal_dir))
-    # bc.log('loc: {}'.format(loc))
-    if goal_dir[0] == goal_dir[1] == 0:  # goal_dir == (0, 0):
-        # bc.log('goal dir is 0,0')
-        return (0, 0)
-
-    # bc.log('line 5')
-    # self.log("MOVING FROM " + str(my_coord) + " TO " + str(nav.dir_to_coord[goal_dir]))
-    i = 0
-    # bc.log(loc)
-    # bc.log(goal_dir)
-    while is_occupied(bc_object, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) and i < 4:
-        # TODO make it able to bug
-        # or apply_dir(loc, goal_dir) in already_been: # doesn't work because `in` doesn't work :(
-        # alternate checking either side of the goal dir, by increasing amounts (but not past directly backwards)
-        if i > 0:
-            i = -i
-        else:
-            i = -i + 1
-        goal_dir = rotate(goal_dir, i)
-    # bc.log('line final')
-    return goal_dir
 
 
 """
@@ -209,6 +183,7 @@ def goto(bc_object, target):
 
 
 class Navigation(object):
+    # TODO Improve this shit
     trajectory = []
 
     visited = []
@@ -218,12 +193,54 @@ class Navigation(object):
         # self.origin = (robot_object.me.x, robot_object.me.y)
         # self.passable_map = robot_object.passable_map
 
+    def goto(self, bc_object, target):
+        """
+
+        :param bc_object: battlecode object
+        :param target: tuple target location
+        :return:
+        """
+        if target is None:
+            return (0, 0)
+
+        # bc.log('entering goto')
+        loc = (bc_object.me.x, bc_object.me.y)
+        self.visited.append(loc)
+        # bc.log('line 1')
+        goal_dir = direction_to(loc, target)
+        bc_object.log('Goal dir: {}'.format(goal_dir))
+        # bc.log('loc: {}'.format(loc))
+        if goal_dir[0] == goal_dir[1] == 0:  # goal_dir == (0, 0):
+            # bc.log('goal dir is 0,0')
+            # self.visited = []  # TODO does this go here?
+            return (0, 0)
+
+        # bc.log('line 5')
+        # self.log("MOVING FROM " + str(my_coord) + " TO " + str(nav.dir_to_coord[goal_dir]))
+        i = 0
+        # bc.log(loc)
+        # bc.log(goal_dir)
+        while is_occupied(bc_object, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) \
+                and not loc_in_list((loc[0] + goal_dir[0], loc[1] + goal_dir[1]), self.visited) \
+                and i < 4:
+
+            # or apply_dir(loc, goal_dir) in already_been: # doesn't work because `in` doesn't work :(
+            # alternate checking either side of the goal dir, by increasing amounts (but not past directly backwards)
+            if i > 0:
+                i = -i
+            else:
+                i = -i + 1
+            goal_dir = rotate(goal_dir, i)
+        # bc.log('line final')
+        return goal_dir
+
+
     def next_tile(self, robot_object):
         # Move in the target direction
         # If cannot move more, bug the walls
         # TODO improve it
 
-        return goto(robot_object, self.destination)
+        return self.goto(robot_object, self.destination)
 
     def set_destination(self, destination):
         self.visited = []

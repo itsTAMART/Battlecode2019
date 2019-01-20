@@ -8,8 +8,8 @@ FIRST_BUILD_ORDER = ["PILGRIM", "CRUSADER", "CRUSADER",
                      "PILGRIM", "PILGRIM", "CRUSADER"]
 
 ECON_BUILD_ORDER = ["PILGRIM", "PILGRIM", "PILGRIM",
-                    "PILGRIM", "PILGRIM", "CRUSADER",
-                    "PILGRIM", "CRUSADER", "PILGRIM"]
+                    "PILGRIM", "PILGRIM",
+                    "PILGRIM", "PILGRIM"]
 
 BUILD_ORDER = ECON_BUILD_ORDER
 

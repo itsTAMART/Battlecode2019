@@ -147,11 +147,11 @@ class CombatManager(object):
 
     def _reset_lists(self):
         """ resets all lists for each turn """
-        self.my_castles = []
+        # self.my_castles = []
         self.my_military = []
         self.my_civil = []
         self.my_signaling_units = []
-        self.enemy_castles = []
+        # self.enemy_castles = []
         self.enemy_military = []
         self.enemy_civil = []
         self.enemy_signaling_units = []

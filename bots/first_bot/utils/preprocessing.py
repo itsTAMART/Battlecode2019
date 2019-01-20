@@ -179,7 +179,7 @@ class MapPreprocess(object):
         # TODO by now only karb mine
         mine = self.karb_mines[self.index_karb_mine]
         bc.log('mine is {} with index {}'.format(mine, self.index_karb_mine))
-        self.index_karb_mine += 1  # TODO problem to know when to stop
+        self.index_karb_mine = (self.index_karb_mine + 1) % len(self.karb_mines)  # TODO problem to know when to stop
         return mine
 
     def log_lists(self, bc):
