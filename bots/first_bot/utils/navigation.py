@@ -416,15 +416,17 @@ class Navigation(object):
             bc.log('trying to go towards trajectory')
             bc.log(self.trajectory[self.trajectory_step])
 
-            if can_move(bc, *self.trajectory[self.trajectory_step]):
+            siguiente = self.trajectory[self.trajectory_step]
+            if can_move(bc, siguiente[0], siguiente[1]):
                 bc.log('next_tile: moving in trajectory')
                 step = direction_to(loc, self.trajectory[self.trajectory_step])
                 self.trajectory_step = (self.trajectory_step + 1) % len(self.trajectory)
                 return step
 
             bc.log('trying to jump next in trajectory')
+            siguiente = self.trajectory[(self.trajectory_step + 1) % len(self.trajectory)]
             bc.log(self.trajectory[(self.trajectory_step + 1) % len(self.trajectory)])
-            if can_move(bc, *self.trajectory[(self.trajectory_step + 1) % len(self.trajectory)]):
+            if can_move(bc, siguiente[0], siguiente[1]):
                 bc.log('next_tile: jumping in trajectory')
                 step = direction_to(loc, self.trajectory[(self.trajectory_step + 1) % len(self.trajectory)])
                 self.trajectory_step = (self.trajectory_step + 2) % len(self.trajectory)
@@ -471,7 +473,15 @@ class Navigation(object):
         # bc.log('cost so far')
         # bc.log(cost_so_far)
 
-        while not self.frontier.empty() and for_hits < 70:
+        HITS = 50
+        if bc.me.time > 1000:
+            HITS = 100
+        elif bc.me.time < 400:
+            HITS = 20
+        if bc.me.time < 200:
+            HITS = 5
+
+        while not self.frontier.empty() and for_hits < HITS:
             # Debug
             # while_loop_time = time.time()
 
