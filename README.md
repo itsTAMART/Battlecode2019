@@ -19,4 +19,7 @@ Pushing bc19 v0.4.0, with post-sprint changes.  This will be the last major chan
 3. Robots can now see the origin location of signals.
 4. Signaling costs fuel proportional to radius, not r^2.  The API still accepts r^2, but the fuel cost will be calculated at Math.ceil(Math.sqrt(r^2)).
 
+### Who to scrim?
+
+try scrim vs big red battlecode, oak's last disciple, vvvvv, knights of cowmelot, deus vult, panda lovers
 

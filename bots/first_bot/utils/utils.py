@@ -29,6 +29,33 @@ def is_occupied(bc, x, y):
     return True
 
 
+def is_walkable(bc, x, y):
+    """
+    Check if that tile is impassable or outside the map
+    :param bc: battlecode object
+    :param x: x position
+    :param y: y position
+    :return: True if occupied False if not occupied
+    """
+    map_size = len(bc.passable_map)
+    if (x >= 0) and (y >= 0) and (x <= map_size) and (y <= map_size):
+        # It is inside the map
+        if bc.passable_map[y][x] > 0:
+            # It is passable
+            return True
+    return False
+
+
+def is_not_walkable(bc, x, y):
+    """
+    Check if that tile is not impassable or inside the map
+    :param bc: battlecode object
+    :param x: x position
+    :param y: y position
+    :return: True if NOT occupied False if occupied
+    """
+    return not is_walkable(bc, x, y)
+
 # TODO test
 def is_not_occupied(bc, x, y):
     """
