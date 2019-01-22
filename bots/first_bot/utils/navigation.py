@@ -283,7 +283,7 @@ def rotate(orig_dir, amount):
 
 
 class Navigation(object):
-    # TODO Improve this shit
+
     trajectory = []
     trajectory_step = 0
     expected_cost = {}
@@ -325,7 +325,6 @@ class Navigation(object):
         # bc.log(loc)
         # bc.log(goal_dir)
         while is_occupied(bc_object, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) \
-                and not loc_in_list((loc[0] + goal_dir[0], loc[1] + goal_dir[1]), self.visited) \
                 and i < 4:
 
             # or apply_dir(loc, goal_dir) in already_been: # doesn't work because `in` doesn't work :(
@@ -352,92 +351,77 @@ class Navigation(object):
         # bc.log('entering goto')
         loc = locate(bc.me)
 
-        # Try to move in the direction
-        goal_dir = direction_to(loc, target)
-        bc.log('Goal dir: {}'.format(goal_dir))
+        if len(self.trajectory) > 0:
+            bc.log('already have a trajectory')
+            bc.log('trying to go towards trajectory')
+            bc.log(self.trajectory[0])
 
-        if goal_dir[0] == goal_dir[1] == 0:  # goal_dir == (0, 0):
-            return (0, 0)
+            siguiente = self.trajectory[0]
+            if can_move(bc, siguiente[0], siguiente[1]):
+                bc.log('next_tile: moving in trajectory')
+                step = direction_to(loc, self.trajectory[0])
+                self.trajectory.remove(self.trajectory[0])
+                # self.trajectory_step = (self.trajectory_step + 1) % len(self.trajectory)
+                return step
 
-        if can_move(bc, *add_dir(loc, goal_dir)):
-            bc.log('moving in goal dir')
-            return goal_dir  # Move in direction
+            bc.log('trying to jump next in trajectory')
+            siguiente = self.trajectory[1 % len(self.trajectory)]
+            bc.log(siguiente)
+            if can_move(bc, siguiente[0], siguiente[1]):
+                bc.log('next_tile: jumping in trajectory')
+                step = difference_to(loc, siguiente)
+                self.trajectory.remove(self.trajectory[0])
+                self.trajectory.remove(self.trajectory[1 % len(self.trajectory)])
+                return step
 
-        # If cannot move:
-        # Try to jump further
-        bc.log('trying to jump')
-        jump_dirs = jump_directions(bc, goal_dir)
-        for dir in jump_dirs:
-            if can_move(bc, *add_dir(loc, dir)):
-                bc.log('jumping in dir: {}'.format(dir))
-                return dir
+        else:  # Trajectory < 0
 
-        # Proper pathfind it
-        bc.log('unable to jump, a-star this mofo')
+            # Try to move in the direction
+            goal_dir = direction_to(loc, target)
+            bc.log('Goal dir: {}'.format(goal_dir))
 
-        # TODO test if it is this way
-        # If you do it backwards the trajectory comes sorted
-        next_tiles, cost_left = self.create_trajectory(bc, loc, target,
-                                                       self.came_from,
-                                                       self.cost_so_far)
-        # next_tile, cost_left = {}, {}
-        t_end = bc.me.time
-        bc.log('a* with {}ms remaining'.format(t_end))
+            if goal_dir[0] == goal_dir[1] == 0:  # goal_dir == (0, 0):
+                return (0, 0)
 
-        # Debug
-        bc.log('trajectory')
-        bc.log(next_tiles)
-        bc.log('expected_cost')
-        bc.log(cost_left)
+            if can_move(bc, *add_dir(loc, goal_dir)):
+                bc.log('moving in goal dir')
+                return goal_dir  # Move in direction
+
+            # If cannot move:
+            # Try to jump further
+            bc.log('trying to jump')
+            jump_dirs = jump_directions(bc, goal_dir)
+            for dir in jump_dirs:
+                if can_move(bc, *add_dir(loc, dir)):
+                    bc.log('jumping in dir: {}'.format(dir))
+                    return dir
+
+            # Proper pathfind it
+            bc.log('unable to jump, a-star this mofo')
+
+            # Create the trajectory with a* to the target or to a close point
+            next_tiles, cost_left = self.create_trajectory(bc, loc, target)
+            # self.came_from,
+            # self.cost_so_far)
+            # next_tile, cost_left = {}, {}
+            t_end = bc.me.time
+            bc.log('a* with {}ms remaining'.format(t_end))
+
+            # CALLS ITSELF AGAIN TO MOVE IN THE TRAJECTORY
+            return self.pseudo_bug(bc, target)
+            # # Debug
+            # bc.log('trajectory')
+            # bc.log(next_tiles)
+            # bc.log('expected_cost')
+            # bc.log(cost_left)
 
         bc.log('exit at the end')
         return (0, 0)
 
-        # self.trajectory = next_tile
-        # self.expected_cost = cost_left
-        #
-        # if can_move(bc, *self.trajectory[loc]):
-        #     bc.log('moving in trajectory')
-        #     return direction_to(loc,self.trajectory[loc])
-        # else:
-        #     bc.log('couldnt move in trajectory')
-        #     return (0,0)
+
 
     # TODO test
     def next_tile(self, bc):
-        # Move in the target direction
-        # If cannot move more, bug the walls
-        loc = locate(bc.me)
-        bc.log(self.trajectory)
-        # bc.log(self.trajectory[loc])
-
-        if len(self.trajectory) > 0:
-            bc.log('already have a trajectory')
-            bc.log('trying to go towards trajectory')
-            bc.log(self.trajectory[self.trajectory_step])
-
-            siguiente = self.trajectory[self.trajectory_step]
-            if can_move(bc, siguiente[0], siguiente[1]):
-                bc.log('next_tile: moving in trajectory')
-                step = direction_to(loc, self.trajectory[self.trajectory_step])
-                self.trajectory_step = (self.trajectory_step + 1) % len(self.trajectory)
-                return step
-
-            bc.log('trying to jump next in trajectory')
-            siguiente = self.trajectory[(self.trajectory_step + 1) % len(self.trajectory)]
-            bc.log(self.trajectory[(self.trajectory_step + 1) % len(self.trajectory)])
-            if can_move(bc, siguiente[0], siguiente[1]):
-                bc.log('next_tile: jumping in trajectory')
-                step = direction_to(loc, self.trajectory[(self.trajectory_step + 1) % len(self.trajectory)])
-                self.trajectory_step = (self.trajectory_step + 2) % len(self.trajectory)
-                return step
-
-
-            else:
-                bc.log('next_tile:couldnt move in trajectory')
-                return (0, 0)
-
-        bc.log('next_tile: go into nav')
         return self.pseudo_bug(bc, self.destination)
 
     def set_destination(self, destination):
@@ -445,24 +429,24 @@ class Navigation(object):
         # self.trajectory = {}
         self.destination = destination
 
-    # TODO test and time
-    def create_trajectory(self, bc, start, goal, came_from={}, cost_so_far={}):
+    def create_trajectory(self, bc, start, goal):
+        # , came_from={}, cost_so_far={}):
 
         for_hits = 0
         # prev_time = time.time()
 
         # If we dont have a came from and cost so far
-        if not bool(came_from) and not (bool(cost_so_far)):
-            bc.log('starting a*')
-            came_from = {}
-            cost_so_far = {}
-            came_from[start] = None
-            cost_so_far[start] = 0
-            self.frontier = PriorityQueue()
-            self.frontier.put(start, 0)
+        # if not bool(came_from) and not (bool(cost_so_far)):
+        bc.log('starting a*')
+        came_from = {}
+        cost_so_far = {}
+        came_from[start] = None
+        cost_so_far[start] = 0
+        self.frontier = PriorityQueue()
+        self.frontier.put(start, 0)
 
-        else:
-            bc.log('continuing a*')
+        # else:
+        #     bc.log('continuing a*')
         # # Debug
         # # bc.log('preloop in {}ms'.format(prev_time-time.time()))
         # bc.log('preloop ')
@@ -494,7 +478,10 @@ class Navigation(object):
             if current[0] == goal[0] and current[1] == goal[1]:
                 bc.log('found')
                 self.trajectory = reconstruct_path(came_from, start, goal)
-                break
+                self.came_from = came_from
+                self.cost_so_far = cost_so_far
+                bc.log('n of hits: {}'.format(for_hits))
+                return came_from, cost_so_far
 
             # # Debug
             # bc.log('walkable_adjacent_tiles:')
@@ -525,7 +512,7 @@ class Navigation(object):
                 # bc.log('new_cost < cost_so_far[next]')
                 # bc.log(new_cost < cost_so_far[next])
 
-                if next not in cost_so_far or new_cost < cost_so_far[next]:  # TODO problem may be here in the 'in'
+                if next not in cost_so_far or new_cost < cost_so_far[next]:
                     cost_so_far[next] = new_cost
 
                     # # Debug
@@ -555,6 +542,13 @@ class Navigation(object):
 
             # bc.log('1 hit :while: in {}ms'.format(while_loop_time - time.time()))
         bc.log('n of hits: {}'.format(for_hits))
+
+        bc.log('could not find it')
+        bc.log('pathing to the latest point')
+
+        current = self.frontier.get()
+        bc.log('pathing towards {}'.format(current))
+        self.trajectory = reconstruct_path(came_from, start, current)
 
         self.came_from = came_from
         self.cost_so_far = cost_so_far

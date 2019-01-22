@@ -31,6 +31,24 @@ def naive_build(bc, unit_name):
     return None
 
 
+def dir_build(bc, unit_name):
+    """
+    tries to build around
+    :param bc: battlecode object
+    :param unit_name: name of the unit to build e.g. PILGRIM
+    :return: True if you have materials to build unit
+    """
+    # TODO do this
+    my_x = bc.me.x
+    my_y = bc.me.y
+    choices = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]
+    for dx, dy in choices:
+        if can_build(bc, unit_name, my_x + dx, my_y + dy):
+            bc.log("Building a {} at [{}, {}]".format(unit_name, bc.me['x'] + dx, bc.me['y'] + dy))
+            return bc.build_unit(SPECS[unit_name], dx, dy)
+    return None
+
+
 
 # TODO test
 class BuildOrderManager(object):

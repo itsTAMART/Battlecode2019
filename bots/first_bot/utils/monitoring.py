@@ -17,7 +17,7 @@ def unit_monitor(self):
     message = '- \n' \
               ' Type: {unit_type}, id: {id} \n' \
               ' turn: {turn}, alive: {alive} \n' \
-              ' fuel consumed: {fuel} \n' \
+              ' time left: {time} \n' \
               ' my position: {position} \n' \
               ' my goal: {goal} \n' \
               '- \n'.format(
@@ -25,7 +25,7 @@ def unit_monitor(self):
         id=self.me['id'],
         turn=self.me['turn'],
         alive=self.step,
-        fuel=self.fuel_consumed,
+        time=self.me.time,
         position=(self.me.x, self.me.y),
         goal=self.destination
     )

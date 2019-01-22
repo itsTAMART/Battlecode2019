@@ -181,8 +181,8 @@ def can_move(bc, x, y):
     """
     my_x = bc.me.x
     my_y = bc.me.y
-    dx = my_x - x
-    dy = my_y - y
+    dx = x - my_x
+    dy = y - my_y
 
     # Enough Fuel?
     fuel = bc.fuel
