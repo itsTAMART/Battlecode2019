@@ -25,10 +25,14 @@ def first_turn_pilgrim(self):
 
 
 def pilgrim(self):
-    """ Basic PILGRIM: mine then, come back to deposit"""
-    # Run combat/give code
-    # Run nav code
-    # Run mining code
+    """ PILGRIM: scouts, mines and goes to church on sundays"""
+
+    """
+    
+    FULL OF KARB: deposit code
+    
+    """
+
 
     # FULL OF KARBONITE
     if full_of_karb(self):
@@ -46,6 +50,27 @@ def pilgrim(self):
                 return self.give(*direction_to(locate(self.me), locate(castle)),
                                  self.me.karbonite, self.me.fuel)
 
+    """
+
+    SCOUTING and combat
+
+    """
+    # TODO do it
+    # If you see enemy unit
+    # Report to castletalk
+    # if Im not on attack range
+    #   Keep doing ma thing, check next on trajectory not in range
+    # if im on attack range
+    #   move away
+    # check if my military to help me
+    #   signal it to them
+
+    """
+
+    MOVING code and MINING
+
+    """
+
     moving_dir = self.nav.next_tile(self)
     self.log('moving dir: {}'.format(moving_dir))  # Move to closest non-occupied mine
     if moving_dir[0] == moving_dir[1] == 0:  # moving_dir == (0,0)
@@ -57,6 +82,26 @@ def pilgrim(self):
             self.log('couldnt move, couldnt mine')
     else:
         return self.move(*moving_dir)
+
+    """
+
+    CHURCH BUILDING
+
+    """
+    # TODO do it
+    # When in place
+    # If not enough material to build.
+    #   Start mining other resource
+    #   If already full
+    #       give to a military unit
+    # else:
+    #   Build Church
+
+
+
+
+
+
 
 
 def receive_mine(bc):

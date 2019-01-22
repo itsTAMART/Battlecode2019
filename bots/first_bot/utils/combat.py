@@ -28,7 +28,7 @@ class CombatManager(object):
     def __init__(self, bc):
         self.my_team = team(bc.me)
 
-    # TODO test
+
     def turn(self, bc):
         """
         The loop which checks visible units and bins them into lists
@@ -95,7 +95,6 @@ class CombatManager(object):
 
         # END FOR
 
-        # TODO test
         # Is attackable by allied military?
         if im_military:
             for enemy in self.attackable:
@@ -140,6 +139,11 @@ class CombatManager(object):
                     min_dist = dist
                     enemy = r
         return enemy
+
+    # TODO new targeting to oneshot castle if possible
+    # TODO do we outgun castle?
+    # TODO target civil units
+    # TODO the 3 different targetings needed
 
     def get_deposit(self):
         return self.my_castles

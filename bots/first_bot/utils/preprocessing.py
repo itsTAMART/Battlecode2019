@@ -182,6 +182,56 @@ class MapPreprocess(object):
         self.index_karb_mine = (self.index_karb_mine + 1) % len(self.karb_mines)  # TODO problem to know when to stop
         return mine
 
+    # TODO test
+    def closest_enemy_castle(self, bc):
+        min_dist = 9999
+        closest_castle = None
+        loc = locate(bc.me)
+
+        for castle in self.enemy_castles:
+            dist = distance(loc, castle)
+            if dist < min_dist:
+                min_dist = dist
+                closest_castle = castle
+        return closest_castle
+
+    # TODO test
+    def get_church_spot(self, bc, loc):
+        """ This will get all mines close to the loc and get adjacents and rate them"""
+
+        candidates = {}
+        max_points = 0
+        chosen_spot = None
+
+        close_k_mines = [mine for mine in self.karb_mines if man_distance(loc, mine) < 5]
+        close_f_mines = [mine for mine in self.fuel_mines if man_distance(loc, mine) < 5]
+        mines = close_f_mines
+        mines.append(close_k_mines)
+
+        for mine in mines:
+            spots = walkable_adjacent_tiles(bc, *mine)
+            for spot in spots:
+                if loc_in_list(spot, mines):
+                    continue  # Better not build in a mine
+
+                # May break
+                if not candidates.__contains__(spot):
+                    candidates[spot] = 1
+                else:
+                    candidates[spot] += 1
+
+        # May break
+        for spot in candidates.keys():
+            points = candidates[spot]
+            if points > max_points:
+                max_points = points
+                chosen_spot = spot
+
+        return chosen_spot
+
+    # TODO restructure my mines when there is a church
+    # TODO check with nav if close are conected
+
     def log_lists(self, bc):
         bc.log('map_size: {}'.format(self.map_size))
         bc.log('n_castles: {}'.format(self.n_castles))

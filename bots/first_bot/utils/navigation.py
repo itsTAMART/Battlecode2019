@@ -299,7 +299,6 @@ class Navigation(object):
 
     def goto(self, bc_object, target):
         """
-
         :param bc_object: battlecode object
         :param target: tuple target location
         :return:
@@ -309,14 +308,12 @@ class Navigation(object):
 
         # bc.log('entering goto')
         loc = (bc_object.me.x, bc_object.me.y)
-        self.visited.append(loc)
         # bc.log('line 1')
         goal_dir = direction_to(loc, target)
         bc_object.log('Goal dir: {}'.format(goal_dir))
         # bc.log('loc: {}'.format(loc))
         if goal_dir[0] == goal_dir[1] == 0:  # goal_dir == (0, 0):
             # bc.log('goal dir is 0,0')
-            # self.visited = []  # TODO does this go here?
             return (0, 0)
 
         # bc.log('line 5')
@@ -325,7 +322,7 @@ class Navigation(object):
         # bc.log(loc)
         # bc.log(goal_dir)
         while is_occupied(bc_object, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) \
-                and i < 4:
+                and i < 5:
 
             # or apply_dir(loc, goal_dir) in already_been: # doesn't work because `in` doesn't work :(
             # alternate checking either side of the goal dir, by increasing amounts (but not past directly backwards)
@@ -426,7 +423,7 @@ class Navigation(object):
 
     def set_destination(self, destination):
         self.visited = []
-        # self.trajectory = {}
+        self.trajectory = []
         self.destination = destination
 
     def create_trajectory(self, bc, start, goal):
@@ -459,7 +456,7 @@ class Navigation(object):
 
         HITS = 50
         if bc.me.time > 1000:
-            HITS = 100
+            HITS = 150
         elif bc.me.time < 400:
             HITS = 20
         if bc.me.time < 200:

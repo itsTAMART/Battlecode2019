@@ -72,6 +72,7 @@ class MyRobot(BCAbstractRobot):
             self.map_process = MapPreprocess()
             self.nav = Navigation()
             self.combat = CombatManager(self)
+            self.tactics = Tactics(self)
             self.map_process.get_initial_game_info(self)
 
         """

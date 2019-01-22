@@ -6,19 +6,24 @@ from ..utils import *
 
 
 def first_turn_crusader(self):
-    # TODO do tings like choosing which castle you represent with the map
-    # self.nav = Navigation()
-    # self.combat = CombatManager(self)
+    # TODO Receive location to attack or defend
+    #
     self.spawn_loc = locate(self.me)
-    # TODO find first castle
     self.destination = None
     return
 
 
 def crusade(self):
-    self.combat.turn(self)
+    """"""
+    """
+    ATTACKING BUSSINESS
+
+    """
+
 
     # ATTACK IF THERE IS A TARGET
+    # TODO change targeting to avoid preachers, attack prophets
+
     target = self.combat.lowest_health_enemy()
     self.log('target: {}'.format(target))
     if target is not None:
@@ -29,7 +34,15 @@ def crusade(self):
 
             return self.attack(*difference_to(locate(self.me), locate(target)))
 
+    """
+    COMBAT MOVEMENT
+
+    """
+
     # AGGRESSIVE BEHAVIOUR
+    # TODO when to aggressive move
+    # TODO when you hear a signal, move to just outside attacking range
+    # TODO do not move inside castle range if you dont outpower it
     aggression_target = self.combat.closest_visible_enemy(self)
     self.log('aggression target: {}'.format(aggression_target))
     if aggression_target is not None:  # Go for closest target
@@ -40,10 +53,10 @@ def crusade(self):
         self.nav.set_destination(self.destination)
 
     # IF LOADED OF KARB GO TO SPAWN TO UNLOAD
+    # TODO restrict this
     if full_of_karb(self):
         # self.destination = self.spawn_loc # Destination represents your mine
         self.nav.set_destination(self.spawn_loc)
-
         # if im_at(self, self.spawn_loc):
         #     # AT SPAWN
         for castle in self.combat.get_deposit():
@@ -55,16 +68,21 @@ def crusade(self):
                 return self.give(*direction_to(locate(self.me), locate(castle)),
                                  self.me.karbonite, self.me.fuel)
 
+    """
+    OFF-COMBAT MOVEMENT
+
+    """
+
+
     # MUVEMENTO
+    # TODO move where you want to go
+    # TODO if rush, aggressive pathfind
+    # TODO
     moving_dir = self.nav.next_tile(self)
     self.log('moving dir: {}'.format(moving_dir))  # Move to closest non-occupied mine
     if moving_dir[0] == moving_dir[1] == 0:  # moving_dir == (0,0)
         if im_at(self, self.destination):  # Am I at my destination?
             self.log('no castle here, so next castle')
-            # TODO go for next castle
-            # TODO destination = next castle
-            # TODO signal there is no longer a castle here
-
         else:
             self.log('stuck')
     else:
