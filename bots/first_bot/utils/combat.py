@@ -149,6 +149,7 @@ class CombatManager(object):
     # TODO new targeting to oneshot castle if possible
     # TODO target civil units
     # TODO the 3 different targetings needed
+    # TODO check if i have been attacked and if im going to lose the combat then retreat
 
     def get_deposit(self):
         return self.my_castles

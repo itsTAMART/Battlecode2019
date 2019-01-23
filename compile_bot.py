@@ -63,6 +63,7 @@ with open(robot_file, 'r') as file:
 # Replace the target string
 filedata = filedata.replace('\nimport', '\n# import')
 filedata = filedata.replace('\nfrom', '\n# from')
+filedata = 'import math\n' + filedata
 filedata = 'import random\n' + filedata
 filedata = 'import battlecode as bc\n' + filedata
 filedata = 'from battlecode import BCAbstractRobot, SPECS\n' + filedata

@@ -61,8 +61,9 @@ def walkable_adjacent_tiles(self, x, y):
     return passable_adjacents
 
 
+# TODO test
 # tiles within range
-def in_range_tiles(self, x, y, r):
+def in_range_tiles(bc, x, y, r):
     """
 
     :param self: robot object
@@ -71,8 +72,8 @@ def in_range_tiles(self, x, y, r):
     :param r: radius squared
     :return:
     """
-    # TODO just do it
-    return
+    tiles = [(x + t[0], y + t[1]) for t in tiles_in_range(r)]
+    return tiles
 
 
 def movable_tiles(self):
