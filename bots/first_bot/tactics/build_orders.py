@@ -71,7 +71,7 @@ if no pilgrims left to mine start creating a PHROPHETS for ARCHER LATTICE
 
 # TODO test
 class BuildOrderManager(object):
-
+    # TODO redo the structure of building
 
     # Reserve materials
     reserve_karb = 0
@@ -116,7 +116,15 @@ class BuildOrderManager(object):
         if self.build_order[build_step + 1] == 'PILGRIM':
             bc.log('sending the pilgrim the next mine location')
             next_mine = bc.map_process.next_mine(bc)
-            bc.comms.send_loc(bc, next_mine, 2, code=T2C['YOUR_MINE_IS'])  # SEND THE PILGRIM THE LOCATION TO ITS MINE
+            if next_mine is not None:
+                bc.log('valid mine')
+                bc.comms.send_loc(bc, next_mine, 2,
+                                  code=T2C['YOUR_MINE_IS'])  # SEND THE PILGRIM THE LOCATION TO ITS MINE
+            else:
+                bc.log('no mines left in this castle')
+                bc.log('sending pilgrim to scout')
+                enemy_castle = bc.map_process.closest_enemy_castle(bc)
+                bc.comms.send_loc(bc, enemy_castle, 2, code=T2C['YOUR_MINE_IS'])  # TODO create new code for scouting
         self.build_step += 1
         self.build_step = min(self.build_step, len(self.build_order) - 1)  # Hacky -2 to keep it in bounds
 

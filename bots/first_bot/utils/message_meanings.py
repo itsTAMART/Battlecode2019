@@ -5,10 +5,10 @@ from bots.first_bot.utils import *
 
 C2T = {
     0: 'YOUR_MINE_IS',
-    1: 'not_implemented_yet',
-    2: 'not_implemented_yet',
-    3: 'not_implemented_yet',
-    4: 'not_implemented_yet',
+    1: 'GO_MINE_BUILD_CHURCH',
+    2: 'SCOUT_RUSH',
+    3: 'FAVORABLE_FIGHT_AT',
+    4: 'UNFAVORABLE_FIGHT_AT',
     5: 'not_implemented_yet',
     6: 'not_implemented_yet',
     7: 'not_implemented_yet',
@@ -25,10 +25,10 @@ C2T = {
 
 T2C = {
     'YOUR_MINE_IS': 0,
-    # 'not_implemented_yet':1 ,
-    # 'not_implemented_yet':2 ,
-    # 'not_implemented_yet':3 ,
-    # 'not_implemented_yet':4 ,
+    'GO_MINE_BUILD_CHURCH': 1,
+    'SCOUT_RUSH': 2,
+    'FAVORABLE_FIGHT_AT': 3,
+    'UNFAVORABLE_FIGHT_AT': 4,
     # 'not_implemented_yet':5 ,
     # 'not_implemented_yet':6 ,
     # 'not_implemented_yet':7 ,

@@ -8,7 +8,7 @@ from ..tactics import *
 
 
 def first_turn_castle(self):
-    # TODO do tings like choosing which castle you represent with the map
+    # TODO Tactics somewhere
     self.build_order = BuildOrderManager(BUILD_ORDER)
 
     # Debug

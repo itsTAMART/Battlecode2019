@@ -5,7 +5,7 @@ import battlecode as bc
 import random
 
 
-# TODO test
+
 def is_occupied(bc, x, y):
     """
     Check if that tile is occupied, impassable or outside the map
@@ -56,7 +56,7 @@ def is_not_walkable(bc, x, y):
     """
     return not is_walkable(bc, x, y)
 
-# TODO test
+
 def is_not_occupied(bc, x, y):
     """
     Check if that tile is not occupied, not impassable or inside the map
@@ -68,7 +68,6 @@ def is_not_occupied(bc, x, y):
     return not is_occupied(bc, x, y)
 
 
-# TODO test
 def is_in_range(robot, x, y, range_squared):
     """
     Check if a target is within SQUARED range of the robot
@@ -86,7 +85,6 @@ def is_in_range(robot, x, y, range_squared):
     return (dx ** 2 + dy ** 2) <= range_squared
 
 
-# TODO test
 def can_build(bc, unit_name, x, y):
     """
     Helper method for building units
@@ -118,7 +116,6 @@ def can_build(bc, unit_name, x, y):
     return valid_cost
 
 
-# TODO test
 def can_mine(bc, x, y):
     """ bc is the battlecode object"""
     # Find if x,y can be mined and if you have enough capacity
@@ -237,6 +234,12 @@ def locate(robot):
 def full_of_karb(self):
     unit_specs = SPECS['UNITS'][self.me.unit]
     return self.me.karbonite == unit_specs['KARBONITE_CAPACITY']
+
+
+def full_of_fuel(self):
+    unit_specs = SPECS['UNITS'][self.me.unit]
+    return self.me.fuel == unit_specs['FUEL_CAPACITY']
+
 
 
 def is_attackable(bc_object, robot):

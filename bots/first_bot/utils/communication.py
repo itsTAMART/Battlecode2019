@@ -197,6 +197,6 @@ class Communications(object):
     def log_lists(self, bc):
         # bc.log('my_castles: {}'.format(len(self.my_castles)))
         # bc.log('my_military: {}'.format(len(self.my_military)))
-        pass  # TODO
+        pass
 
 #

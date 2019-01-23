@@ -26,9 +26,10 @@ class MyRobot(BCAbstractRobot):
     fuel_map = []
 
     # Unit Variables
+    # useful_locations
     destination = None
     spawn_loc = None
-    useful_locations = []
+    church_spot = None
 
     # Game info blob
     game_info = None

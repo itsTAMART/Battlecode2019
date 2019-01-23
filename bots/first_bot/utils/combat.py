@@ -140,8 +140,13 @@ class CombatManager(object):
                     enemy = r
         return enemy
 
+    # do we outgun castle?
+    def can_we_outgun_castle(self, bc):
+        # TODO do we outgun castle?
+
+        pass
+
     # TODO new targeting to oneshot castle if possible
-    # TODO do we outgun castle?
     # TODO target civil units
     # TODO the 3 different targetings needed
 

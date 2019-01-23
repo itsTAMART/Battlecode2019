@@ -9,6 +9,9 @@ from bots.first_bot.utils import *
 
 DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]
 
+WALKING_DIRECTIONS = [(0, -1), (0, -2), (1, -1), (1, 0), (2, 0), (1, 1), (0, 1), (0, 2), (-1, 1), (-1, 0), (-2, 0),
+                      (-1, -1)]
+
 
 # rotate_arr = [
 #     (0, 1),
@@ -33,7 +36,17 @@ def adjacent_tiles(self, x, y):
     return adjacent
 
 
-# TODO test
+# Adjacent tiles
+def walking_tiles(self, x, y):
+    map_size = len(self.passable_map[0])
+    adjacent = [(x + dx, y + dy) for dx, dy in WALKING_DIRECTIONS
+                if ((x + dx) >= 0) and
+                ((x + dx) < map_size) and
+                ((y + dy) >= 0) and
+                ((y + dy) < map_size)]
+    return adjacent
+
+
 # Passable adjacent tiles
 def passable_adjacent_tiles(self, x, y):
     adjacents = adjacent_tiles(self, x, y)
@@ -43,7 +56,7 @@ def passable_adjacent_tiles(self, x, y):
 
 # Passable adjacent tiles FASTER VERSION
 def walkable_adjacent_tiles(self, x, y):
-    adjacents = adjacent_tiles(self, x, y)
+    adjacents = walking_tiles(self, x, y)
     passable_adjacents = [(ax, ay) for ax, ay in adjacents if is_walkable(self, ax, ay)]
     return passable_adjacents
 
@@ -165,7 +178,7 @@ def man_distance(origin, destination):
     return (abs(dx) + abs(dy))
 
 
-# TODO test
+
 def jump_directions(bc, dir):
     """
     gets the possible moves apart from the ones 1 tile away
@@ -334,6 +347,44 @@ class Navigation(object):
         # bc.log('line final')
         return goal_dir
 
+    def go_to(self, bc_object, target):
+        """
+        :param bc_object: battlecode object
+        :param target: tuple target location
+        :return:
+        """
+        if target is None:
+            return (0, 0)
+
+        # bc.log('entering goto')
+        loc = (bc_object.me.x, bc_object.me.y)
+        # bc.log('line 1')
+        goal_dir = direction_to(loc, target)
+        bc_object.log('Goal dir: {}'.format(goal_dir))
+        # bc.log('loc: {}'.format(loc))
+        if goal_dir[0] == goal_dir[1] == 0:  # goal_dir == (0, 0):
+            # bc.log('goal dir is 0,0')
+            return (0, 0)
+
+        # bc.log('line 5')
+        # self.log("MOVING FROM " + str(my_coord) + " TO " + str(nav.dir_to_coord[goal_dir]))
+        i = 0
+        # bc.log(loc)
+        # bc.log(goal_dir)
+        while is_occupied(bc_object, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) \
+                and i < 4:
+
+            # or apply_dir(loc, goal_dir) in already_been: # doesn't work because `in` doesn't work :(
+            # alternate checking either side of the goal dir, by increasing amounts (but not past directly backwards)
+            if i > 0:
+                i = -i
+            else:
+                i = -i + 1
+            goal_dir = rotate(goal_dir, i)
+        # bc.log('line final')
+        return goal_dir
+
+
     def pseudo_bug(self, bc, target):
         """
 
@@ -353,14 +404,6 @@ class Navigation(object):
             bc.log('trying to go towards trajectory')
             bc.log(self.trajectory[0])
 
-            siguiente = self.trajectory[0]
-            if can_move(bc, siguiente[0], siguiente[1]):
-                bc.log('next_tile: moving in trajectory')
-                step = direction_to(loc, self.trajectory[0])
-                self.trajectory.remove(self.trajectory[0])
-                # self.trajectory_step = (self.trajectory_step + 1) % len(self.trajectory)
-                return step
-
             bc.log('trying to jump next in trajectory')
             siguiente = self.trajectory[1 % len(self.trajectory)]
             bc.log(siguiente)
@@ -370,6 +413,21 @@ class Navigation(object):
                 self.trajectory.remove(self.trajectory[0])
                 self.trajectory.remove(self.trajectory[1 % len(self.trajectory)])
                 return step
+
+            siguiente = self.trajectory[0]
+            if can_move(bc, siguiente[0], siguiente[1]):
+                bc.log('next_tile: moving in trajectory')
+                step = direction_to(loc, self.trajectory[0])
+                self.trajectory.remove(self.trajectory[0])
+                # self.trajectory_step = (self.trajectory_step + 1) % len(self.trajectory)
+                return step
+
+            bc.log('trying to :goto: next in trajectory')
+            siguiente = self.trajectory[1 % len(self.trajectory)]
+            goal_dir = self.go_to(bc, siguiente)
+            if can_move(bc, *add_dir(loc, goal_dir)):
+                bc.log('moving in goal dir')
+                return goal_dir  # Move in direction
 
         else:  # Trajectory < 0
 
@@ -415,9 +473,6 @@ class Navigation(object):
         bc.log('exit at the end')
         return (0, 0)
 
-
-
-    # TODO test
     def next_tile(self, bc):
         return self.pseudo_bug(bc, self.destination)
 

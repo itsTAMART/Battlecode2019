@@ -28,6 +28,26 @@ def pilgrim(self):
     """ PILGRIM: scouts, mines and goes to church on sundays"""
 
     """
+
+    CHURCH BUILDING
+
+    """
+    # Not nearby castle's
+    if self.church_spot is None:
+        self.log('getting good churchsport')
+        self.church_spot = self.map_process.get_church_spot(self, self.destination)
+        self.log('Good Church Spot in {}'.format(self.church_spot))
+
+    # TODO do it
+    # When in place
+    # If not enough material to build.
+    #   Start mining other resource
+    #   If already full
+    #       give to a military unit
+    # else:
+    #   Build Church
+
+    """
     
     FULL OF KARB: deposit code
     
@@ -35,7 +55,7 @@ def pilgrim(self):
 
 
     # FULL OF KARBONITE
-    if full_of_karb(self):
+    if full_of_karb(self) or full_of_fuel(self):
         # self.destination = self.spawn_loc # Destination represents your mine
         self.nav.set_destination(self.spawn_loc)
 
@@ -83,19 +103,7 @@ def pilgrim(self):
     else:
         return self.move(*moving_dir)
 
-    """
 
-    CHURCH BUILDING
-
-    """
-    # TODO do it
-    # When in place
-    # If not enough material to build.
-    #   Start mining other resource
-    #   If already full
-    #       give to a military unit
-    # else:
-    #   Build Church
 
 
 
