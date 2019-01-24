@@ -104,6 +104,7 @@ class MapPreprocess(object):
         self.sorted_mines_by_distance(bc)
         self.get_n_castles(bc)
 
+
     def get_initial_game_info_2(self, bc):
         self.get_my_castles(bc)
         self.reflect_enemy_castles(bc)
@@ -259,7 +260,7 @@ class MapPreprocess(object):
             bc.log('castle: {}'.format(castle))
             dist = distance(loc, castle)
             bc.log('dist: {}'.format(dist))
-            if dist < min_dist:
+            if int(dist) < int(min_dist):
                 min_dist = dist
                 closest_castle = castle
         return closest_castle

@@ -27,6 +27,7 @@ class Communications(object):
 
     def turn(self, bc):
         """ retrieves robots signaling that turn """
+        self._reset_lists()
         for r in bc.vision_list:
             if bc.is_radioing(r):
                 self.signaling.append(r)
@@ -188,6 +189,18 @@ class Communications(object):
 
             return
 
+    def issue_church(self, bc, church_loc):
+        """ notify the castles you will build a church in church_loc """
+        # TODO implement it
+        pass
+
+    def churches_being_built(self, bc):
+        """ check if there is going to be any church built soon """
+        # TODO implement it
+        # Check if any pilgrim is going to build a church
+        # Plan for it with the build order
+        # Recalculate mines of this castle taking into account the church
+        pass
 
     def _reset_lists(self):
         """ resets all lists for each turn """
@@ -195,6 +208,7 @@ class Communications(object):
 
 
     def log_lists(self, bc):
+        bc.log('signaling: \n {}'.format(self.signaling))
         # bc.log('my_castles: {}'.format(len(self.my_castles)))
         # bc.log('my_military: {}'.format(len(self.my_military)))
         pass

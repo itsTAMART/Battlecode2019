@@ -81,6 +81,7 @@ class BuildOrderManager(object):
     # Reserve materials
     reserve_karb = 0
     reserve_fuel = 0
+    issued_churches = 0
 
     # Tasks
     pilgrim_tasks = {}

@@ -26,11 +26,11 @@ def second_third_turns_castles(self):
 def castle(self):
     # Shenanigans to get castle locations
     if self.step < 3:
-        # self.log('{} turn'.format(self.step))
         second_third_turns_castles(self)
     # Part 2 of map processing
     if self.step == 3:
         self.map_process.get_initial_game_info_2(self)
+
         # Debug
         self.map_process.log_lists(self)
 
@@ -42,6 +42,7 @@ def castle(self):
     else:
         self.log("Not building this time")
 
+    # Combat Routines
     target = self.combat.lowest_health_enemy()
     self.log('attack target: {}'.format(target))
     if target is not None:

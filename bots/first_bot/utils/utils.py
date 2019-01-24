@@ -4,8 +4,10 @@ from battlecode import BCAbstractRobot, SPECS
 import battlecode as bc
 import random
 
+from bots.first_bot.utils import *
 
 
+# TODO test
 def is_occupied(bc, x, y):
     """
     Check if that tile is occupied, impassable or outside the map
@@ -20,7 +22,7 @@ def is_occupied(bc, x, y):
         if bc.passable_map[y][x] > 0:
             # It is passable
             for robot in bc.vision_list:
-                if (robot['x'] == x) and (robot['y'] == y):
+                if (robot['x'] == x) and (robot['y'] == y) and (robot['id'] != bc.me.id):
                     # It is occupied by a robot
                     return True
             else:
@@ -241,6 +243,11 @@ def full_of_fuel(self):
     return self.me.fuel == unit_specs['FUEL_CAPACITY']
 
 
+# TODO test
+def is_a_mine(bc, location):
+    """ True if location (tuple) is a mine """
+    return (loc_in_list(location, bc.map_process.karb_mines) or
+            loc_in_list(location, bc.map_process.fuel_mines))
 
 def is_attackable(bc_object, robot):
     """ Check if you can attack the robot included fuel cost etc."""
@@ -282,6 +289,23 @@ def im_at(bc, location):
 
     return bc.me.x == location[0] and bc.me.y == location[1]
 
+
+def is_adjacent(origin, destination):
+    return distance(origin, destination) < 3
+
+
+# TODO test
+def closest(bc, origin, tiles):
+    """ from a list of tiles choose the one that is closest """
+    d_tiles = [(distance(origin, tile), tile) for tile in tiles if is_walkable(bc, *tile)]
+    return sorted_tuples(d_tiles)[0][1]
+
+
+# TODO test
+def closest_passable(bc, origin, tiles):
+    """ from a list of tiles choose the one that is closest """
+    d_tiles = [(distance(origin, tile), tile) for tile in tiles if is_not_occupied(bc, *tile)]
+    return sorted_tuples(d_tiles)[0][1]
 
 # EXAMPLEFUNKY CODE
 

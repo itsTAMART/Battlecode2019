@@ -32,27 +32,52 @@ def pilgrim(self):
     CHURCH BUILDING
 
     """
-    # Not nearby castle's
-    if self.church_spot is None:
-        self.log('getting good churchsport')
-        self.church_spot = self.map_process.get_church_spot(self, self.destination)
-        self.log('Good Church Spot in {}'.format(self.church_spot))
+    # TODO test
 
-    # TODO do it
-    # When in place
-    # If not enough material to build.
-    #   Start mining other resource
-    #   If already full
-    #       give to a military unit
-    # else:
-    #   Build Church
+    if pending_church(self):
+        # Not nearby castle's
+        if man_distance(self.spawn_loc, self.destination) > 6:
+            if is_a_mine(self, self.destination):
+                self.log('getting good churchsport')
+                self.church_spot = self.map_process.get_church_spot(self, self.destination)
+                self.log('Good Church Spot in {}'.format(self.church_spot))
+                self.comms.issue_church(bc, self.church_spot)
+            else:
+                # My destination is not a church
+                self.log('My destination is not a church')
+                self.church_spot = (-1, -1)
+        else:
+            # My destination is close to a castle
+            self.log('My destination is close to a castle')
+            self.church_spot = (-1, -1)
+
+    # TODO test
+
+    if want_to_build_church(self):
+        if ready_to_church(self):
+            # When in place
+            if is_adjacent(locate(self.me), self.church_spot):
+                #   Build Church
+                if can_build(self, "CHURCH", *self.church_spot):
+                    spot = self.church_spot
+                    self.church_spot = (-1, -1)  # You are done building churches
+                    return self.build_unit(SPECS["CHURCH"], *direction_to(locate(self.me), spot))
+            else:  # Not adjacent
+                # Go towards the church site
+                self.nav.set_destination(closest_passable(self, locate(self.me), self.church_spot))
+
+
 
     """
     
     FULL OF KARB: deposit code
     
     """
-
+    # TODO implement
+    # If not enough material to build.
+    #   Start mining other resource
+    #   If already full
+    #       give to a military unit
 
     # FULL OF KARBONITE
     if full_of_karb(self) or full_of_fuel(self):
@@ -90,7 +115,7 @@ def pilgrim(self):
     MOVING code and MINING
 
     """
-
+    # TODO test if it mines with the new navigation
     moving_dir = self.nav.next_tile(self)
     self.log('moving dir: {}'.format(moving_dir))  # Move to closest non-occupied mine
     if moving_dir[0] == moving_dir[1] == 0:  # moving_dir == (0,0)
@@ -122,6 +147,9 @@ def receive_mine(bc):
             if code == T2C['YOUR_MINE_IS']:
                 # Debug
                 bc.log('mine received correctly')
+                if not is_a_mine(bc, mine):
+                    bc.log('SCOUT pilgrim')
+                    bc.church_spot = (-1, -1)  # Hacky way to avoid checking for church if you are scouting
                 return mine
             else:
                 bc.log('not appropriate code')
@@ -129,6 +157,20 @@ def receive_mine(bc):
         bc.log('no castle found')
     bc.log('couldnt find mine')
 
+
+# TODO test
+def pending_church(bc):
+    """ True if you still have to build a church """
+    return bc.church_spot is None
+
+
+def want_to_build_church(bc):
+    """ True if you want to build a church """
+    return not bc.church_spot[0] == bc.church_spot[1] == -1
+
+
+def ready_to_church(bc):
+    return bc.karbonite > 40 and bc.fuel > 180  # Hardcoded 90% of the cost of a church
 
 
 #
