@@ -237,7 +237,8 @@ class PriorityQueue:
     # TODO test
     def get(self):
         """ HANDLE WITH CARE, this can break in so many ways"""
-        first = sorted(self.elements)[0]
+        # first = sorted(self.elements)[0]
+        first = sorted_tuples(self.elements)[0]
         self.elements.remove(first)
         return first[1]
 
