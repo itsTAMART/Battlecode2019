@@ -9,7 +9,7 @@ from ..tactics import *
 
 def first_turn_castle(self):
     # TODO Tactics somewhere
-    self.build_order = BuildOrderManager(BUILD_ORDER)
+    self.build_order = BuildOrderManager()
 
     # Debug
     self.map_process.log_lists(self)
@@ -34,18 +34,20 @@ def castle(self):
         # Debug
         self.map_process.log_lists(self)
 
-    # #Debug
-    # self.log('castle coords')
-    # self.log(self.comms.castle_coords)
-    # # self.log(self.vision_list)
-
     # Select what to build
-    order = naive_build(self, self.build_order.current_order())
+    order = self.build_order.turn_build(self)
     if order is not None:
         self.log('built correctly')
-        self.build_order.built_correctly(self)
         return order
     else:
         self.log("Not building this time")
+
+    target = self.combat.lowest_health_enemy()
+    self.log('attack target: {}'.format(target))
+    if target is not None:
+        if can_attack(self, *locate(target)):
+            self.log('attack:')
+            self.log(locate(target))  # TODO test
+            return self.attack(*difference_to(locate(self.me), locate(target)))
 
 #

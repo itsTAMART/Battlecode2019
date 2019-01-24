@@ -2,18 +2,10 @@
 
 
 
-# TuDu's
+# TO DO's
 
-encontrar por que falla el metodo goto() con
+scrim all the international teams with old bot
 
-[0m TypeError: Cannot read property '0' of undefined
-    at goto (vm.js:1912:47)
-    at vm.js:1934:10
-    at Function.<anonymous> (vm.js:44:29)
-    at pilgrim (vm.js:2097:28)
-    at __call__ (vm.js:132:26)
-    at vm.js:2206:11
-    at Function.<anonymous> (vm.js:44:29)
-    at vm.js:1478:17
-    at Function.<anonymous> (vm.js:44:29)
-    at vm.js:1:7
+scrim US with new one
+
+
