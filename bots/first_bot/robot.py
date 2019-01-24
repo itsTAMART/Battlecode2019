@@ -37,6 +37,7 @@ class MyRobot(BCAbstractRobot):
     # Personal stats
     fuel_consumed = 0
     step = -1
+    stuck = 0
 
     # Helper Objects
     build_order = None

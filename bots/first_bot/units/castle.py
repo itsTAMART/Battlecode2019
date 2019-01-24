@@ -8,7 +8,6 @@ from ..tactics import *
 
 
 def first_turn_castle(self):
-    # TODO Tactics somewhere
     self.build_order = BuildOrderManager()
 
     # Debug

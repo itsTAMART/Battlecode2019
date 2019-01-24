@@ -177,35 +177,84 @@ class MapPreprocess(object):
 
     def filter_mines_by_distance(self, bc):
         """ assign each mine to a castle by distance """
+        bc.log('filter mines by distance')
+        bc.log('before')
+        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
+        # bc.log('karb_mines: {}'.format(self.karb_mines))
+        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
         my_loc = locate(bc.me)
         # Remove my loc from castle locs
         my_castles = [castle for castle in self.my_castles if castle != my_loc]
+
+        k_mines = []
+        f_mines = []
         # filter distances if d other castles < my dist
         for castle in my_castles:
             for d, mine in self.k_distances:
-                if man_distance(castle, mine) < d:
-                    self.karb_mines.remove(mine)
+                if man_distance(castle, mine) < int(d):
+                    k_mines.append(mine)
             for d, mine in self.f_distances:
-                if man_distance(castle, mine) < d:
-                    self.fuel_mines.remove(mine)
+                if man_distance(castle, mine) < int(d):
+                    f_mines.append(mine)
 
-    # TODO test
+        self.karb_mines = [mine for mine in self.karb_mines if (mine not in k_mines)]
+        self.fuel_mines = [mine for mine in self.fuel_mines if (mine not in f_mines)]
+        # # Fix the lists
+        # self.sorted_mines_by_distance(bc)
+
+        bc.log('after')
+        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
+        # bc.log('karb_mines: {}'.format(self.karb_mines))
+        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
+
     def filter_mines_by_church(self, bc, church_loc):
         """ remove the mines belonging to a church """
+        bc.log('filter mines by church')
         bc.log('before')
         bc.log('karb_mines: {}'.format(len(self.karb_mines)))
         bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
+
+        k_mines = []
+        f_mines = []
+
         # filter distances if d to church is < 7
         for mine in self.karb_mines:
-            if man_distance(church_loc, mine) < 7:
-                self.karb_mines.remove(mine)
+            if man_distance(church_loc, mine) > 7:
+                k_mines.append(mine)
         for mine in self.fuel_mines:
-            if man_distance(church_loc, mine) < 7:
-                self.fuel_mines.remove(mine)
+            if man_distance(church_loc, mine) > 7:
+                f_mines.append(mine)
+        self.karb_mines = k_mines
+        self.fuel_mines = f_mines
         # Fix the lists
         self.sorted_mines_by_distance(bc)
         bc.log('after')
         bc.log('karb_mines: {}'.format(len(self.karb_mines)))
+        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
+
+    def filter_mines_for_church(self, bc):
+        """ keep the mines belonging to a church """
+        bc.log('filter_mines_for_church')
+        bc.log('before')
+        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
+        # bc.log('karb_mines: {}'.format(self.karb_mines))
+        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
+        # filter distances if d to church is < 7
+        k_mines = []
+        f_mines = []
+        for mine in self.karb_mines:
+            if (int(man_distance(locate(bc.me), mine)) < 7):
+                k_mines.append(mine)
+        for mine in self.fuel_mines:
+            if (int(man_distance(locate(bc.me), mine)) < 7):
+                f_mines.append(mine)
+        self.karb_mines = k_mines
+        self.fuel_mines = f_mines
+        # Fix the lists
+        self.sorted_mines_by_distance(bc)
+        bc.log('after')
+        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
+        bc.log('karb_mines: {}'.format(self.karb_mines))
         bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
 
     def next_mine(self, bc):
@@ -269,8 +318,9 @@ class MapPreprocess(object):
         self.index_fuel_mine = (self.index_fuel_mine + 1)
         return mine
 
-    # TODO test
+
     def closest_enemy_castle(self, bc):
+        """ only for castles """
         bc.log('closest enemy castle')
         min_dist = 99999
         closest_castle = None
@@ -293,15 +343,21 @@ class MapPreprocess(object):
         max_points = 0
         chosen_spot = None
 
-        close_k_mines = [mine for mine in self.karb_mines if man_distance(loc, mine) < 6]
-        close_f_mines = [mine for mine in self.fuel_mines if man_distance(loc, mine) < 6]
+        close_k_mines = [mine for mine in self.karb_mines if man_distance(loc, mine) < 7]
+        close_f_mines = [mine for mine in self.fuel_mines if man_distance(loc, mine) < 7]
+
         mines = close_f_mines
-        mines.append(close_k_mines)
-        bc.log('Church mines')
+        for mine in close_k_mines:
+            mines.append(mine)
+
+        # bc.log('Church mines')
+        # bc.log('{}'.format(mines))
 
         for mine in mines:
             # spots = walkable_adjacent_tiles(bc, *mine)
             spots = walkable_adjacent_tiles(bc, *mine)
+            # bc.log('spots')
+            # bc.log('{}'.format(spots))
             for spot in spots:
                 if loc_in_list(spot, mines):
                     continue  # Better not build in a mine
@@ -322,50 +378,34 @@ class MapPreprocess(object):
                 chosen_spot = spot
 
         return tuple([int(x) for x in chosen_spot.split(',')])  # FUCK JAVASCRIPT AND YOUR TRANSPILER, REALLY
+        # return (0, 0)
 
-    # TODO do and test
+
     # Assign all mines to that church or only its own?????
 
-    # Restructure my mines when there is a church
-    def filter_mines_bc_church(self, bc, church):
-        """
-
-        :param bc:
-        :param church: church location
-        :return: None
-        """
-        my_loc = locate(bc.me)
-        # add the church
-        all_deposits = self.my_castles
-        all_deposits.append(church)
-        # Remove my loc from castle locs
-        my_castles = [castle for castle in all_deposits if castle != my_loc]
-        # filter distances if d other castles < my dist
-        for castle in my_castles:
-            for d, mine in self.k_distances:
-                if man_distance(castle, mine) < d:
-                    self.karb_mines.remove(mine)
-            for d, mine in self.f_distances:
-                if man_distance(castle, mine) < d:
-                    self.fuel_mines.remove(mine)
-
-    def filter_mines_for_church(self, bc):
-        """ remove the mines belonging to a church """
-        bc.log('before')
-        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
-        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
-        # filter distances if d to church is < 7
-        for mine in self.karb_mines:
-            if not (man_distance(locate(bc.me), mine) < 7):
-                self.karb_mines.remove(mine)
-        for mine in self.fuel_mines:
-            if not (man_distance(locate(bc.me), mine) < 7):
-                self.fuel_mines.remove(mine)
-        # Fix the lists
-        self.sorted_mines_by_distance(bc)
-        bc.log('after')
-        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
-        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
+    # # Restructure my mines when there is a church
+    # def filter_mines_bc_church(self, bc, church):
+    #     """
+    #
+    #     :param bc:
+    #     :param church: church location
+    #     :return: None
+    #     """
+    #     my_loc = locate(bc.me)
+    #     # add the church
+    #     all_deposits = self.my_castles
+    #     all_deposits.append(church)
+    #     # Remove my loc from castle locs
+    #     my_castles = [castle for castle in all_deposits if castle != my_loc]
+    #     # filter distances if d other castles < my dist
+    #     for castle in my_castles:
+    #         for d, mine in self.k_distances:
+    #             if man_distance(castle, mine) < d:
+    #                 self.karb_mines.remove(mine)
+    #         for d, mine in self.f_distances:
+    #             if man_distance(castle, mine) < d:
+    #                 self.fuel_mines.remove(mine)
+    #     self.sorted_mines_by_distance(bc)
 
 
 

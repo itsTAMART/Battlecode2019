@@ -126,7 +126,7 @@ class BuildOrderManager(object):
 
         order = None
         # Type of Game Build order
-        if self.build_step < 6:
+        if self.build_step < 6 and bc.unit == SPECS["CASTLE"]:
             bc.log('first turns build orders')
             self.build_order_from_gametype(bc)
             unit = self.current_order()

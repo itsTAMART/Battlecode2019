@@ -135,6 +135,9 @@ def pilgrim(self):
     SCOUTING and combat
 
     """
+    # if self.stuck > 5: # If stuck you now a scout
+    #     self.destination = reflect(self,self.spawn_loc,self.map_process.horizontal_reflection)
+    #     self.nav.set_destination(self.destination)
     # TODO do it
     # If you see enemy unit
     # Report to castletalk

@@ -403,6 +403,7 @@ class Navigation(object):
         loc = locate(bc.me)
 
         if len(self.trajectory) > 0:
+
             bc.log('already have a trajectory')
             bc.log('trying to go towards trajectory')
             bc.log(self.trajectory[0])
@@ -412,6 +413,7 @@ class Navigation(object):
             bc.log(siguiente)
             if can_move(bc, siguiente[0], siguiente[1]):
                 bc.log('next_tile: jumping in trajectory')
+                bc.stuck = 0
                 step = difference_to(loc, siguiente)
                 self.trajectory.remove(self.trajectory[0])
                 self.trajectory.remove(self.trajectory[1 % len(self.trajectory)])
@@ -420,6 +422,7 @@ class Navigation(object):
             siguiente = self.trajectory[0]
             if can_move(bc, siguiente[0], siguiente[1]):
                 bc.log('next_tile: moving in trajectory')
+                bc.stuck = 0
                 step = direction_to(loc, self.trajectory[0])
                 self.trajectory.remove(self.trajectory[0])
                 # self.trajectory_step = (self.trajectory_step + 1) % len(self.trajectory)
@@ -429,6 +432,7 @@ class Navigation(object):
             siguiente = self.trajectory[1 % len(self.trajectory)]
             goal_dir = self.go_to(bc, siguiente)
             if can_move(bc, *add_dir(loc, goal_dir)):
+                bc.stuck += 1
                 bc.log('moving in goal dir')
                 return goal_dir  # Move in direction
 
@@ -439,20 +443,21 @@ class Navigation(object):
             bc.log('Goal dir: {}'.format(goal_dir))
 
             if goal_dir[0] == goal_dir[1] == 0:  # goal_dir == (0, 0):
+                bc.stuck = 0
                 return (0, 0)
 
-            if can_move(bc, *add_dir(loc, goal_dir)):
-                bc.log('moving in goal dir')
-                return goal_dir  # Move in direction
-
-            # If cannot move:
-            # Try to jump further
-            bc.log('trying to jump')
-            jump_dirs = jump_directions(bc, goal_dir)
-            for dir in jump_dirs:
-                if can_move(bc, *add_dir(loc, dir)):
-                    bc.log('jumping in dir: {}'.format(dir))
-                    return dir
+            # if can_move(bc, *add_dir(loc, goal_dir)):
+            #     bc.log('moving in goal dir')
+            #     return goal_dir  # Move in direction
+            #
+            # # If cannot move:
+            # # Try to jump further
+            # bc.log('trying to jump')
+            # jump_dirs = jump_directions(bc, goal_dir)
+            # for dir in jump_dirs:
+            #     if can_move(bc, *add_dir(loc, dir)):
+            #         bc.log('jumping in dir: {}'.format(dir))
+            #         return dir
 
             # Proper pathfind it
             bc.log('unable to jump, a-star this mofo')
@@ -473,6 +478,7 @@ class Navigation(object):
             # bc.log('expected_cost')
             # bc.log(cost_left)
 
+        bc.stuck += 1
         bc.log('exit at the end')
         return (0, 0)
 
