@@ -42,7 +42,8 @@ class Tactics(object):
     karb_scarce = False
 
     def __init__(self, bc):
-        bc.log('Tactics initialized')
+        # bc.log('Tactics initialized')
+        pass
 
     def game_type(self):
         # TODO implement it

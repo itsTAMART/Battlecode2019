@@ -63,7 +63,7 @@ def walkable_adjacent_tiles(self, x, y):
 
 # TODO test
 # tiles within range
-def in_range_tiles(bc, x, y, r):
+def in_range_tiles(loc, r):
     """
 
     :param self: robot object
@@ -72,6 +72,7 @@ def in_range_tiles(bc, x, y, r):
     :param r: radius squared
     :return:
     """
+    x, y = loc
     tiles = [(x + t[0], y + t[1]) for t in tiles_in_range(r)]
     return tiles
 
@@ -479,9 +480,12 @@ class Navigation(object):
         return self.pseudo_bug(bc, self.destination)
 
     def set_destination(self, destination):
-        self.visited = []
-        self.trajectory = []
-        self.destination = destination
+        if self.destination is None:
+            self.destination = destination
+        if destination[0] != self.destination[0] or destination[1] != self.destination[1]:
+            self.visited = []
+            self.trajectory = []
+            self.destination = destination
 
     def create_trajectory(self, bc, start, goal):
         # , came_from={}, cost_so_far={}):

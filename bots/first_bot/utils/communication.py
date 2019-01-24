@@ -22,6 +22,11 @@ class Communications(object):
     first_turn_coords = {}
     castle_coords = []
 
+    # Church comm flags
+    sent_first_church = False
+    first_turn_churches = {}
+    churches_coords = []
+
     def __init__(self, bc):
         self.my_team = team(bc.me)
 
@@ -124,6 +129,7 @@ class Communications(object):
                 self.send_castle_talk(bc, bc.me.x)
         return
 
+    # TODO test it didnt break
     def receive_initial_castle_location(self, bc):
         # If im a castle
         # In the first 3 turns
@@ -187,20 +193,85 @@ class Communications(object):
                 # bc.log('first turn coords: {}'.format(self.first_turn_coords))
                 bc.log('recieved coords: {}'.format(castle_cord))
 
-            return
+        return
 
+    def get_code_castletalk(self, mssg):
+        coord = mssg % 64
+        code = int((mssg - coord) / 64)
+        return code, coord
+
+    def code_castletalk(self, code, coord):
+        mssg = (coord % 64) + ((code % 8) * 64)
+        return mssg
+
+    # TODO test it
     def issue_church(self, bc, church_loc):
         """ notify the castles you will build a church in church_loc """
-        # TODO implement it
-        pass
+        bc.log('issuing a church')
+        if not self.sent_first_church:
+            # Send first part
+            mssg = self.code_castletalk(T2M['CHURCH_AT'], church_loc[0])
+            self.sent_first_church = True
+        else:
+            # Send second part
+            mssg = self.code_castletalk(T2M['CHURCH_AT'], church_loc[1])
+        bc.log('sending: {} by castletalk'.format(mssg))
+        self.send_castle_talk(bc, mssg)
 
+    # TODO test
     def churches_being_built(self, bc):
         """ check if there is going to be any church built soon """
-        # TODO implement it
+
         # Check if any pilgrim is going to build a church
-        # Plan for it with the build order
-        # Recalculate mines of this castle taking into account the church
+        for robot in self.signaling:
+            mssg, id = self.receive_castle_talk(robot)
+            if mssg == 0:
+                # bc.log('not valid coord_1')
+                continue
+            code, coord = self.get_code_castletalk(mssg)
+            if code != T2M['CHURCH_AT']:
+                continue
+            if id not in self.first_turn_coords:
+                bc.log('receiving first part')
+                bc.log('coord_1: {}'.format(coord))
+                self.first_turn_coords[id] = coord
+            # Yes:when called again
+            else:
+                bc.log('receiving second part')
+                church_cord = (self.first_turn_coords[id], coord)
+                # bc.log('first turn coords: {}'.format(self.first_turn_coords))
+                bc.log('recieved church coords: {}'.format(church_cord))
+                self.churches_coords.append(church_cord)
+                # NEW CHURCH
+                # Plan for it with the build order
+                bc.log('save resources for the new church')
+                bc.build_order.save_for_church(bc)
+                # Recalculate mines of this castle taking into account the church
+                bc.log('replan mines for the new church')
+                bc.map_process.my_churches = self.churches_coords
+                bc.map_process.filter_mines_for_church(bc, church_cord)
+
+
         pass
+
+    def hello_church(self, bc):
+        mssg = self.code_castletalk(T2M['HELLO_CHURCH'], 0)
+        self.send_castle_talk(bc, mssg)
+
+    def is_there_new_churches(self, bc):
+        for robot in self.signaling:
+            mssg, id = self.receive_castle_talk(robot)
+            if mssg == 0:
+                # bc.log('not valid coord_1')
+                continue
+            code, coord = self.get_code_castletalk(mssg)
+            if code != T2M['HELLO_CHURCH']:
+                continue
+            bc.log('receiving a new church')
+            bc.build_order.church_built(bc)
+
+
+
 
     def _reset_lists(self):
         """ resets all lists for each turn """

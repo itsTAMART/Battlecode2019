@@ -297,7 +297,7 @@ def is_adjacent(origin, destination):
 # TODO test
 def closest(bc, origin, tiles):
     """ from a list of tiles choose the one that is closest """
-    d_tiles = [(distance(origin, tile), tile) for tile in tiles if is_walkable(bc, *tile)]
+    d_tiles = [(distance(origin, tile), tile) for tile in tiles]
     return sorted_tuples(d_tiles)[0][1]
 
 
@@ -305,6 +305,7 @@ def closest(bc, origin, tiles):
 def closest_passable(bc, origin, tiles):
     """ from a list of tiles choose the one that is closest """
     d_tiles = [(distance(origin, tile), tile) for tile in tiles if is_not_occupied(bc, *tile)]
+    # bc.log(sorted_tuples(d_tiles))
     return sorted_tuples(d_tiles)[0][1]
 
 # EXAMPLEFUNKY CODE

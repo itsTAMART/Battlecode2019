@@ -84,6 +84,7 @@ class MapPreprocess(object):
     n_castles = 1
     my_castle_ids = []
     my_castles = []
+    my_churches = []
     enemy_castles = []
     karb_mines = []
     fuel_mines = []
@@ -188,6 +189,25 @@ class MapPreprocess(object):
                 if man_distance(castle, mine) < d:
                     self.fuel_mines.remove(mine)
 
+    # TODO test
+    def filter_mines_by_church(self, bc, church_loc):
+        """ remove the mines belonging to a church """
+        bc.log('before')
+        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
+        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
+        # filter distances if d to church is < 7
+        for mine in self.karb_mines:
+            if man_distance(church_loc, mine) < 7:
+                self.karb_mines.remove(mine)
+        for mine in self.fuel_mines:
+            if man_distance(church_loc, mine) < 7:
+                self.fuel_mines.remove(mine)
+        # Fix the lists
+        self.sorted_mines_by_distance(bc)
+        bc.log('after')
+        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
+        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
+
     def next_mine(self, bc):
         """ Chooses the next mine to send the pilgrim
         If RUSH choose first 2 fuel then karb
@@ -273,13 +293,14 @@ class MapPreprocess(object):
         max_points = 0
         chosen_spot = None
 
-        close_k_mines = [mine for mine in self.karb_mines if man_distance(loc, mine) < 5]
-        close_f_mines = [mine for mine in self.fuel_mines if man_distance(loc, mine) < 5]
+        close_k_mines = [mine for mine in self.karb_mines if man_distance(loc, mine) < 6]
+        close_f_mines = [mine for mine in self.fuel_mines if man_distance(loc, mine) < 6]
         mines = close_f_mines
         mines.append(close_k_mines)
         bc.log('Church mines')
 
         for mine in mines:
+            # spots = walkable_adjacent_tiles(bc, *mine)
             spots = walkable_adjacent_tiles(bc, *mine)
             for spot in spots:
                 if loc_in_list(spot, mines):
@@ -287,10 +308,12 @@ class MapPreprocess(object):
 
                 # May break
                 if not candidates.__contains__(spot):
+                    # bc.log('.')
                     candidates[spot] = 1
                 else:
                     candidates[spot] += 1
 
+        bc.log('Candidates {}'.format(candidates))
         # May break
         for spot in candidates.keys():
             points = candidates[spot]
@@ -298,7 +321,7 @@ class MapPreprocess(object):
                 max_points = points
                 chosen_spot = spot
 
-        return chosen_spot
+        return tuple([int(x) for x in chosen_spot.split(',')])  # FUCK JAVASCRIPT AND YOUR TRANSPILER, REALLY
 
     # TODO do and test
     # Assign all mines to that church or only its own?????
@@ -325,6 +348,24 @@ class MapPreprocess(object):
             for d, mine in self.f_distances:
                 if man_distance(castle, mine) < d:
                     self.fuel_mines.remove(mine)
+
+    def filter_mines_for_church(self, bc):
+        """ remove the mines belonging to a church """
+        bc.log('before')
+        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
+        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
+        # filter distances if d to church is < 7
+        for mine in self.karb_mines:
+            if not (man_distance(locate(bc.me), mine) < 7):
+                self.karb_mines.remove(mine)
+        for mine in self.fuel_mines:
+            if not (man_distance(locate(bc.me), mine) < 7):
+                self.fuel_mines.remove(mine)
+        # Fix the lists
+        self.sorted_mines_by_distance(bc)
+        bc.log('after')
+        bc.log('karb_mines: {}'.format(len(self.karb_mines)))
+        bc.log('fuel_mines: {}'.format(len(self.fuel_mines)))
 
 
 

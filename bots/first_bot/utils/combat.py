@@ -59,7 +59,8 @@ class CombatManager(object):
                 # bc.log(r)
                 # Castle, Civil or Military ?
                 if r.unit == SPECS['CASTLE'] or r.unit == SPECS['CHURCH']:
-                    self.my_castles.append(r)
+                    if not loc_in_list(r, self.my_castles):
+                        self.my_castles.append(r)
                     continue
                 if r.unit == SPECS['PILGRIM']:
                     self.my_civil.append(r)
@@ -150,6 +151,18 @@ class CombatManager(object):
     # TODO target civil units
     # TODO the 3 different targetings needed
     # TODO check if i have been attacked and if im going to lose the combat then retreat
+
+    # TODO test
+    def get_churches(self):
+        churches = [r for r in self.my_castles if r.unit == SPECS["CHURCH"]]
+        return churches
+
+    # TODO test
+    def are_there_closeby_churches(self, bc):
+        for church in self.get_churches():
+            if man_distance(locate(bc.me), locate(church)) < 7:
+                return True
+        return False
 
     def get_deposit(self):
         return self.my_castles

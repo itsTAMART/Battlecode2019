@@ -34,18 +34,23 @@ def castle(self):
         # Debug
         self.map_process.log_lists(self)
 
+    # Check to manage economy
+    self.comms.churches_being_built(self)
+    self.comms.is_there_new_churches(self)
+
     # Select what to build
     order = self.build_order.turn_build(self)
     if order is not None:
-        self.log('built correctly')
+        # self.log('built correctly')
         return order
     else:
-        self.log("Not building this time")
+        # self.log("Not building this time")
+        pass
 
     # Combat Routines
     target = self.combat.lowest_health_enemy()
-    self.log('attack target: {}'.format(target))
     if target is not None:
+        self.log('attack target: {}'.format(target))
         if can_attack(self, *locate(target)):
             self.log('attack:')
             self.log(locate(target))  # TODO test

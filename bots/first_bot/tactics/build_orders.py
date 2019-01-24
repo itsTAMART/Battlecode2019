@@ -130,11 +130,11 @@ class BuildOrderManager(object):
             bc.log('first turns build orders')
             self.build_order_from_gametype(bc)
             unit = self.current_order()
-            bc.log('trying to build {}'.format(unit))
+            bc.log('    trying to build {}'.format(unit))
             if self.enough_for_unit(bc, unit):
-                bc.log('enough pela')
+                # bc.log('enough pela')
                 target = self.current_target(bc)
-                bc.log('target: {}'.format(target))
+                # bc.log('target: {}'.format(target))
                 order = dir_build(bc, unit, target)
                 if order is not None:
                     bc.comms.send_loc(bc, target, 2,
@@ -176,21 +176,21 @@ class BuildOrderManager(object):
                 else:
                     bc.log('could not build')
 
-        # Defensive lattice
-        # Offensive lattice?
-        unit = bc.tactics.lategame_unit(bc)
-        target = bc.tactics.lategame_target(bc)
-        if self.enough_for_unit(bc, unit):
-            if target is not None:
-                order = dir_build(bc, unit, target)
-                bc.log('unit: {}, target: {}'.format(unit, target))
-                if order is not None:
-                    bc.comms.send_loc(bc, target, 2,
-                                      code=T2C['YOUR_MINE_IS'])  # SEND THE unit THE LOCATION TO ITS target
-                    self.built_correctly(bc)
-                    return order
-                else:
-                    bc.log('could not build')
+        # # Defensive lattice
+        # # Offensive lattice?
+        # unit = bc.tactics.lategame_unit(bc)
+        # target = bc.tactics.lategame_target(bc)
+        # if self.enough_for_unit(bc, unit):
+        #     if target is not None:
+        #         order = dir_build(bc, unit, target)
+        #         bc.log('unit: {}, target: {}'.format(unit, target))
+        #         if order is not None:
+        #             bc.comms.send_loc(bc, target, 2,
+        #                               code=T2C['YOUR_MINE_IS'])  # SEND THE unit THE LOCATION TO ITS target
+        #             self.built_correctly(bc)
+        #             return order
+        #         else:
+        #             bc.log('could not build')
 
         # Finally return whatever you chose, probably None
         bc.log('not building this time')
@@ -230,7 +230,7 @@ class BuildOrderManager(object):
 
     def current_target(self, bc):
         bc.log('build step: {}'.format(self.build_step))
-        bc.log('target order: {}'.format(self.target_order))
+        # bc.log('target order: {}'.format(self.target_order))
         if self.build_step < len(self.target_order):
             target = self.target_order[self.build_step]
             # bc.log('    target {}'.format(target))
@@ -243,21 +243,24 @@ class BuildOrderManager(object):
 
     def built_correctly(self, bc):
         """ build confirmation, increase the build step index"""
-        bc.log('built correctly')
+        # bc.log('built correctly')
         self.build_step += 1
 
     # TODO test
     def save_for_church(self, bc):
         bc.log('saving for church')
-        self.reserve_karb += SPECS['UNITS'][SPECS['CHURCH']]['CONSTRUCTION_KARBONITE']
-        self.reserve_fuel += SPECS['UNITS'][SPECS['CHURCH']]['CONSTRUCTION_FUEL']
+        self.issued_churches += 1
+        if self.issued_churches % 2 == 1:  # Only increase the savings for each odd(impar) church
+            self.reserve_karb += 50
+            self.reserve_fuel += 200
 
     # TODO test
     def church_built(self, bc):
         bc.log('church built')
-        self.reserve_karb -= SPECS['UNITS'][SPECS['CHURCH']]['CONSTRUCTION_KARBONITE']
-        self.reserve_fuel -= SPECS['UNITS'][SPECS['CHURCH']]['CONSTRUCTION_FUEL']
-
+        if self.issued_churches % 2 == 1:  # Only decrease the savings for each odd(impar) church
+            self.reserve_karb -= 50
+            self.reserve_fuel -= 200
+        self.issued_churches -= 1
         self.reserve_karb = max(self.reserve_karb, 0)
         self.reserve_fuel = max(self.reserve_fuel, 0)
 
