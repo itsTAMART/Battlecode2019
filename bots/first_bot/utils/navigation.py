@@ -9,9 +9,15 @@ from bots.first_bot.utils import *
 
 DIRECTIONS = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]
 
-WALKING_DIRECTIONS = [(0, -1), (0, -2), (1, -1), (1, 0), (2, 0), (1, 1), (0, 1), (0, 2), (-1, 1), (-1, 0), (-2, 0),
-                      (-1, -1)]
+WALKING_DIRECTIONS = [(-2, 0), (-1, -1), (-1, 0), (-1, 1), (0, -2), (0, -1), (0, 0), (0, 1), (0, 2), (1, -1), (1, 0),
+                      (1, 1),
+                      (2, 0)]
 
+EXTENDED_WALKING_DIRECTIONS = [(-3, 0), (-2, -2), (-2, -1), (-2, 0), (-2, 1), (-2, 2), (-1, -2), (-1, -1), (-1, 0),
+                               (-1, 1), (-1, 2),
+                               (0, -3), (0, -2), (0, -1), (0, 0), (0, 1), (0, 2), (0, 3), (1, -2), (1, -1), (1, 0),
+                               (1, 1), (1, 2), (2, -2),
+                               (2, -1), (2, 0), (2, 1), (2, 2), (3, 0)]
 
 # rotate_arr = [
 #     (0, 1),
@@ -47,11 +53,32 @@ def walking_tiles(self, x, y):
     return adjacent
 
 
+# Adjacent tiles
+def extended_walking_tiles(self, x, y):
+    map_size = len(self.passable_map[0])
+    adjacent = [(x + dx, y + dy) for dx, dy in EXTENDED_WALKING_DIRECTIONS
+                if ((x + dx) >= 0) and
+                ((x + dx) < map_size) and
+                ((y + dy) >= 0) and
+                ((y + dy) < map_size)]
+    return adjacent
+
 # Passable adjacent tiles
 def passable_adjacent_tiles(self, x, y):
     adjacents = adjacent_tiles(self, x, y)
     passable_adjacents = [(ax, ay) for ax, ay in adjacents if is_not_occupied(self, ax, ay)]
     return passable_adjacents
+
+
+# Passable adjacent tiles
+def passable_movement_tiles(self, x, y):
+    if self.me.unit == SPECS["CRUSADER"]:
+        adjacents = extended_walking_tiles(self, x, y)
+    else:
+        adjacents = walking_tiles(self, x, y)
+    passable_adjacents = [(ax, ay) for ax, ay in adjacents if is_not_occupied(self, ax, ay)]
+    return passable_adjacents
+
 
 
 # Passable adjacent tiles FASTER VERSION
@@ -619,7 +646,131 @@ class Navigation(object):
 
         return came_from, cost_so_far
 
+    def fine_create_trajectory(self, bc, start, goal):
+        """ use only for short distances or in combat """
 
+        for_hits = 0
+        # prev_time = time.time()
+
+        # If we dont have a came from and cost so far
+        # if not bool(came_from) and not (bool(cost_so_far)):
+        bc.log('starting a*')
+        came_from = {}
+        cost_so_far = {}
+        came_from[start] = None
+        cost_so_far[start] = 0
+        self.frontier = PriorityQueue()
+        self.frontier.put(start, 0)
+
+        # else:
+        #     bc.log('continuing a*')
+        # # Debug
+        # # bc.log('preloop in {}ms'.format(prev_time-time.time()))
+        # bc.log('preloop ')
+        # bc.log('frontier')
+        # bc.log(frontier.elements)
+        # bc.log('came from')
+        # bc.log(came_from)
+        # bc.log('cost so far')
+        # bc.log(cost_so_far)
+
+        HITS = 40
+        if bc.me.time > 1000:
+            HITS = 70
+        elif bc.me.time < 400:
+            HITS = 20
+        if bc.me.time < 200:
+            HITS = 5
+
+        while not self.frontier.empty() and for_hits < HITS:
+            # Debug
+            # while_loop_time = time.time()
+
+            current = self.frontier.get()
+
+            # # Debug
+            # bc.log('current:')
+            # bc.log(current)
+
+            if current[0] == goal[0] and current[1] == goal[1]:
+                bc.log('found')
+                self.trajectory = reconstruct_path(came_from, start, goal)
+                self.came_from = came_from
+                self.cost_so_far = cost_so_far
+                bc.log('n of hits: {}'.format(for_hits))
+                return came_from, cost_so_far
+
+            # # Debug
+            # bc.log('walkable_adjacent_tiles:')
+            # bc.log(walkable_adjacent_tiles(bc, *current))
+
+            for next in passable_movement_tiles(bc, *current):
+
+                # # Debug
+                # bc.log('next:')
+                # bc.log(next)
+
+                # for_loop_time = time.time()
+                new_cost = cost_so_far[current] + distance(current, next)
+
+                # # Debug
+                # bc.log('new_cost:')
+                # bc.log(new_cost)
+
+                # # Debug
+                # bc.log('if current not in cost_so_far:')
+                # bc.log(current not in cost_so_far)
+
+                # # Debug
+                # bc.log('if next not in cost_so_far:')
+                # bc.log(next not in cost_so_far)
+
+                # # Debug
+                # bc.log('new_cost < cost_so_far[next]')
+                # bc.log(new_cost < cost_so_far[next])
+
+                if next not in cost_so_far or new_cost < cost_so_far[next]:
+                    cost_so_far[next] = new_cost
+
+                    # # Debug
+                    # bc.log('cost so far')
+                    # bc.log(cost_so_far)
+
+                    priority = new_cost + heuristic(goal, next)
+
+                    # # Debug
+                    # bc.log('priority')
+                    # bc.log(priority)
+
+                    self.frontier.put(next, priority)
+
+                    # # Debug
+                    # bc.log('frontier')
+                    # bc.log(frontier.elements)
+
+                    came_from[next] = current
+
+                    # # Debug
+                    # bc.log('came from')
+                    # bc.log(came_from)
+
+                    for_hits += 1
+                # bc.log('1 hit :for: in {}ms'.format(for_loop_time - time.time()))
+
+            # bc.log('1 hit :while: in {}ms'.format(while_loop_time - time.time()))
+        bc.log('n of hits: {}'.format(for_hits))
+
+        bc.log('could not find it')
+        bc.log('pathing to the latest point')
+
+        current = self.frontier.get()
+        bc.log('pathing towards {}'.format(current))
+        self.trajectory = reconstruct_path(came_from, start, current)
+
+        self.came_from = came_from
+        self.cost_so_far = cost_so_far
+
+        return came_from, cost_so_far
 
 
 #
