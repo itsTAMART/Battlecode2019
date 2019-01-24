@@ -135,9 +135,21 @@ def pilgrim(self):
     SCOUTING and combat
 
     """
-    # if self.stuck > 5: # If stuck you now a scout
-    #     self.destination = reflect(self,self.spawn_loc,self.map_process.horizontal_reflection)
-    #     self.nav.set_destination(self.destination)
+    # TODO test
+    # If close to my mine
+    if distance(locate(self.me), self.destination) < 4:
+        # If it is occuppied
+        if is_a_mine(self, self.destination):
+            if is_occupied(self, *self.destination):
+                self.log('my mine is occupied')
+                self.stuck += 1
+                if self.stuck > 3:  # for more than 3 turns
+                    # go to scout
+                    self.destination = reflect(self, self.spawn_loc, self.map_process.horizontal_reflection)
+                    self.nav.set_destination(self.destination)  # Go there
+
+
+
     # TODO do it
     # If you see enemy unit
     # Report to castletalk
@@ -214,6 +226,10 @@ def want_to_build_church(bc):
 
 def ready_to_church(bc):
     return bc.karbonite > 40 and bc.fuel > 180  # Hardcoded 90% of the cost of a church
+
+
+def is_a_mine(bc, loc):
+    return loc_in_list(loc, bc.map_process.karb_mines) or loc_in_list(loc, bc.map_process.fuel_mines)
 
 
 #
