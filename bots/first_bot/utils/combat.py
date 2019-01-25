@@ -59,8 +59,9 @@ class CombatManager(object):
                 # bc.log(r)
                 # Castle, Civil or Military ?
                 if r.unit == SPECS['CASTLE'] or r.unit == SPECS['CHURCH']:
-                    if not loc_in_list(r, self.my_castles):
-                        self.my_castles.append(r)
+                    if not loc_in_list(locate(r), bc.map_process.my_castles):
+                        bc.map_process.my_castles.append(locate(r))
+                    self.my_castles.append(r)
                     continue
                 if r.unit == SPECS['PILGRIM']:
                     self.my_civil.append(r)
@@ -75,6 +76,8 @@ class CombatManager(object):
             else:  # ENEMY TEAM
                 # Castle, Civil or Military ?
                 if r.unit == SPECS['CASTLE'] or r.unit == SPECS['CHURCH']:
+                    if not loc_in_list(locate(r), bc.map_process.enemy_castles):
+                        bc.map_process.enemy_castles.append(locate(r))
                     self.enemy_castles.append(r)
                 if r.unit == SPECS['PILGRIM']:
                     self.enemy_civil.append(r)
@@ -164,17 +167,22 @@ class CombatManager(object):
                 return True
         return False
 
-    def get_deposit(self):
-        return self.my_castles
-    # Give (target)
+    def get_deposit(self, bc):
+        bc.log('        my_deposits: {}'.format(bc.map_process.my_castles))
+        return bc.map_process.my_castles
+
+    def are_enemies_near(self, bc):
+        """ True if yes """
+        enemy_castles = [c for c in self.enemy_castles if bc.is_visible(c)]
+        return (len(enemy_castles) > 0) or (len(self.enemy_civil) > 0) or (len(self.enemy_military) > 0)
 
     def _reset_lists(self):
         """ resets all lists for each turn """
-        # self.my_castles = []
+        self.my_castles = []
         self.my_military = []
         self.my_civil = []
         self.my_signaling_units = []
-        # self.enemy_castles = []
+        self.enemy_castles = []
         self.enemy_military = []
         self.enemy_civil = []
         self.enemy_signaling_units = []

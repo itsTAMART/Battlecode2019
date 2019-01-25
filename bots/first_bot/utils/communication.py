@@ -27,6 +27,11 @@ class Communications(object):
     first_turn_churches = {}
     churches_coords = []
 
+    # Targets done flags
+    sent_first_target = False
+    first_turn_targets = {}
+    target_coords = []
+
     def __init__(self, bc):
         self.my_team = team(bc.me)
 
@@ -180,15 +185,15 @@ class Communications(object):
                 # If map is horizontally reflected:
                 if bc.map_process.horizontal_reflection:
                     bc.log('horizontal map')
-                    castle_cord = (self.first_turn_coords[id], coord)
+                    castle_cord = tuple((self.first_turn_coords[id], coord))
                     if not loc_in_list(castle_cord, self.castle_coords):
-                        self.castle_coords.append(castle_cord)
+                        self.castle_coords.append(tuple(castle_cord))
                 #  If map is vertically reflected :
                 else:
                     bc.log('vertical map')
-                    castle_cord = (coord, self.first_turn_coords[id])
+                    castle_cord = tuple((coord, self.first_turn_coords[id]))
                     if not loc_in_list(castle_cord, self.castle_coords):
-                        self.castle_coords.append(castle_cord)
+                        self.castle_coords.append(tuple(castle_cord))
 
                 # bc.log('first turn coords: {}'.format(self.first_turn_coords))
                 bc.log('recieved coords: {}'.format(castle_cord))
@@ -215,6 +220,7 @@ class Communications(object):
         else:
             # Send second part
             mssg = self.code_castletalk(T2M['CHURCH_AT'], church_loc[1])
+            self.sent_first_church = False
         bc.log('sending: {} by castletalk'.format(mssg))
         self.send_castle_talk(bc, mssg)
 
@@ -291,6 +297,68 @@ class Communications(object):
             bc.log('    no castle found')
         bc.log('    couldnt find mine')
         return locate(bc.me)
+
+    def notify_target_done(self, bc, target):
+        """ notify the castles you will build a church in church_loc """
+        bc.log('notify_target_done')
+        if not self.sent_first_target:
+            # Send first part
+            mssg = self.code_castletalk(T2M['TARGET_DONE'], target[0])
+            self.sent_first_target = True
+        else:
+            # Send second part
+            mssg = self.code_castletalk(T2M['TARGET_DONE'], target[1])
+            self.sent_first_target = False
+        bc.log('sending: {} by castletalk'.format(mssg))
+        self.send_castle_talk(bc, mssg)
+
+    # TODO test
+    def check_if_targets_done(self, bc):
+        """ check if there is going to be any church built soon """
+        bc.log('Check if target done')
+
+        # Check if any pilgrim is going to build a church
+        for robot in self.signaling:
+            mssg, id = self.receive_castle_talk(robot)
+            if mssg == 0:
+                # bc.log('not valid coord_1')
+                continue
+            code, coord = self.get_code_castletalk(mssg)
+            if code != T2M['TARGET_DONE']:
+                continue
+            bc.log('    One robot trying to signal something')
+            if id not in self.first_turn_targets:
+                bc.log('    receiving first part')
+                bc.log('    coord_1: {}'.format(coord))
+                self.first_turn_targets[id] = coord
+            # Yes:when called again
+            else:
+                bc.log('    receiving second part')
+                target_cord = (self.first_turn_targets[id], coord)
+                # bc.log('first turn coords: {}'.format(self.first_turn_coords))
+                bc.log('    recieved target coords: {}'.format(target_cord))
+
+                # REACTION TO THE TARGET DONE
+
+                bc.log('    enemy_castles: {}'.format(bc.map_process.enemy_castles))
+                bc.log('    target_cord: {}'.format(target_cord))
+                # if in castles
+                # if loc_in_list(target_cord, bc.map_process.enemy_castles):
+                bc.log('    removing castle')
+                # bc.map_process.enemy_castles.remove(target_cord)
+                bc.map_process.enemy_castles = [c for c in bc.map_process.enemy_castles if c != target_cord]
+                # remove it
+                bc.log('    enemy_castles: {}'.format(bc.map_process.enemy_castles))
+                # give closer of castles
+                # next_target = closest(bc, bc.map_process.enemy_castles)
+                next_target = bc.map_process.closest_enemy_castle(bc)
+                bc.log('    next_target: {}'.format(next_target))
+                # TODO finish it SEND THE NEW TARGET
+
+        pass
+
+
+
 
 
     def _reset_lists(self):

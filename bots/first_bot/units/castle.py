@@ -33,9 +33,11 @@ def castle(self):
         # Debug
         self.map_process.log_lists(self)
 
+    # COMMUNICATION
     # Check to manage economy
     self.comms.churches_being_built(self)
     self.comms.is_there_new_churches(self)
+    self.comms.check_if_targets_done(self)
 
     # Select what to build
     order = self.build_order.turn_build(self)

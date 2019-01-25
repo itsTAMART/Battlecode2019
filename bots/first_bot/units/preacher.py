@@ -76,7 +76,7 @@ def preacher(self):
         self.nav.set_destination(self.spawn_loc)
         # if im_at(self, self.spawn_loc):
         #     # AT SPAWN
-        for castle in self.combat.get_deposit():
+        for castle in self.combat.get_deposit(self):
             if can_give(self, castle):
                 # GIVE the material
                 self.log('Direction to give {}'.format(direction_to(locate(self.me), locate(castle))))

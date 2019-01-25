@@ -28,6 +28,15 @@ def prophet(self):
     # TODO check if its going to be a FAKE RUSH
 
     """
+    COMUNICATIONS
+    
+    """
+    # Second part of sending church_loc
+    if self.comms.sent_first_target:
+        self.log('  sending second part of the target_loc')
+        self.comms.notify_target_done(self, self.destination)
+
+    """
     ATTACKING BUSSINESS
 
     """
@@ -45,6 +54,24 @@ def prophet(self):
             self.log(locate(target))  # TODO testing
 
             return self.attack(*difference_to(locate(self.me), locate(target)))
+
+    """
+    IF IM AT TARGET and NO enemies here: notify
+    
+    """
+    # if Distance to target < 5
+    if distance(locate(self.me), self.destination) < 5:
+        self.log('  at destination ')
+
+        if not self.combat.are_enemies_near(self):
+            # if no enemies here
+            self.log('  no-one here, NOTIFYING')
+            # Notify to castle
+            self.comms.notify_target_done(self, self.destination)
+
+
+
+
 
     """
     COMBAT MOVEMENT
@@ -72,7 +99,7 @@ def prophet(self):
         self.nav.set_destination(self.spawn_loc)
         # if im_at(self, self.spawn_loc):
         #     # AT SPAWN
-        for castle in self.combat.get_deposit():
+        for castle in self.combat.get_deposit(self):
             if can_give(self, castle):
                 # GIVE the material
                 self.log('Direction to give {}'.format(direction_to(locate(self.me), locate(castle))))

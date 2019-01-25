@@ -75,16 +75,16 @@ def pilgrim(self):
 
         # if im_at(self, self.spawn_loc):
         #     # AT SPAWN
-        for castle in self.combat.get_deposit():
+        for castle in self.combat.get_deposit(self):
             if can_give(self, castle):
                 # GIVE the material
-                self.log('Direction to give {}'.format(direction_to(locate(self.me), locate(castle))))
+                self.log('Direction to give {}'.format(direction_to(locate(self.me), castle)))
                 self.log('Karb and fuel given {}, {}'.format(self.me.karbonite, self.me.fuel))
                 self.nav.set_destination(self.destination)  # GO BACK TO THE MINE
-                return self.give(*direction_to(locate(self.me), locate(castle)),
+                return self.give(*direction_to(locate(self.me), castle),
                                  self.me.karbonite, self.me.fuel)
 
-        deposits = [locate(deposit) for deposit in self.combat.get_deposit()]
+        deposits = self.combat.get_deposit(self)
         self.log('deposits: {}'.format(deposits))
         my_depo = closest(self, locate(self.me), deposits)
         self.log('my depo: {}'.format(my_depo))

@@ -133,41 +133,43 @@ def can_mine(bc, x, y):
 
 
 # # You cannot check other's unit karb and fuel
-# def can_give(bc, dx, dy):
-#     """ bc is the battlecode object"""
-#     # Find if dx,dy can be given materials
-#     unit_specs = SPECS['UNITS'][bc.me.unit]
-#     fuel_capacity = unit_specs['FUEL_CAPACITY']
-#     karb_capacity = unit_specs['KARBONITE_CAPACITY']
-#     loc = (bc.me.x, bc.me.y)
-#     my_team = bc.me.team
-#     # Si tienes algun material
-#     if bc.me.karbonite > 0 or bc.me.fuel > 0:
-#         # Si hay un robot en dx, dy
-#         for robot in bc.vision_list:
-#             if robot.team == my_team and \
-#                     robot.x == loc[0] + dx and \
-#                     robot.y == loc[1] + dy:
-#                 # Si tiene capacidad restante
-#                 if robot.karbonite < karb_capacity and \
-#                         robot.fuel < fuel_capacity:
-#                     return True
-#     # Return true
-#
-#     return False
-
-
-def can_give(bc, castle):
+def can_give(bc, loc):
     """ bc is the battlecode object"""
+    dx, dy = difference_to(locate(bc.me), loc)
+    # Too far
+    if abs(dx) + abs(dy) > 2:
+        return False
+
     # Find if dx,dy can be given materials
-    x, y = bc.me.x, bc.me.y
-    t_x, t_y = castle.x, castle.y
+    unit_specs = SPECS['UNITS'][bc.me.unit]
+    fuel_capacity = unit_specs['FUEL_CAPACITY']
+    karb_capacity = unit_specs['KARBONITE_CAPACITY']
+    loc = (bc.me.x, bc.me.y)
+    my_team = bc.me.team
     # Si tienes algun material
     if bc.me.karbonite > 0 or bc.me.fuel > 0:
-        # Is adjacent?
-        return (x - t_x) ** 2 < 2 and (y - t_y) ** 2 < 2
+        # Si hay un robot en dx, dy
+        for robot in bc.vision_list:
+            if robot.team == my_team and \
+                    robot.x == loc[0] + dx and \
+                    robot.y == loc[1] + dy:
+                return True
+    # Return true
 
     return False
+
+
+# def can_give(bc, castle):
+#     """ bc is the battlecode object"""
+#     # Find if dx,dy can be given materials
+#     x, y = bc.me.x, bc.me.y
+#     t_x, t_y = castle.x, castle.y
+#     # Si tienes algun material
+#     if bc.me.karbonite > 0 or bc.me.fuel > 0:
+#         # Is adjacent?
+#         return (x - t_x) ** 2 < 2 and (y - t_y) ** 2 < 2
+#
+#     return False
 
 
 def can_move(bc, x, y):

@@ -145,8 +145,8 @@ class Tactics(object):
 
         targets.append(rush_target)
         targets.append(rush_target)
-        targets.append('m')
         targets.append(rush_target)
+        targets.append('m')
         targets.append(rush_target)
 
         return targets
