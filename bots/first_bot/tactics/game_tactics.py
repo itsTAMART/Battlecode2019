@@ -37,7 +37,7 @@ class Tactics(object):
     ECON = True  # True by default
     RUSH = False
     FAKE_RUSH = False
-
+    close_castle = False
     fuel_scarce = False
     karb_scarce = False
 
@@ -45,9 +45,66 @@ class Tactics(object):
         # bc.log('Tactics initialized')
         pass
 
-    def game_type(self):
-        # TODO implement it
-        pass
+    def game_type_1(self, bc):
+        """ to be called in the first turn """
+        bc.log('Deciding game type')
+        # if small map, RUSH
+        if bc.map_process.map_size < 40:  # SMALL MAP
+            bc.log('    small map, RUSH')
+            self.ECON = False
+            self.RUSH = True
+
+        # if map big, ECON
+        if bc.map_process.map_size > 58:  # SMALL MAP
+            bc.log('    map big, ECON')
+            self.ECON = True
+            self.RUSH = False
+
+        # if 3 castles, ECON
+        bc.map_process.get_n_castles(bc)
+        if bc.map_process.n_castles > 2:
+            bc.log('    s3 castles, ECON')
+            self.ECON = True
+            self.RUSH = False
+
+        # else FAKE_RUSH
+        if bc.map_process.n_castles < 3:
+            bc.log('    <= 2 castles, FAKERUSH')
+            self.ECON = False
+            self.RUSH = True
+            self.FAKE_RUSH = True
+
+        # if close castle, RUSH
+        if self.distance_of_castles(bc, locate(bc.me)) < 26:
+            self.close_castle = True
+            self.ECON = False
+            self.RUSH = True
+
+        # if karb resource scarce, RUSH karb
+        if len(bc.map_process.karb_mines) < 7:
+            bc.log('    karb resource scarce, RUSH karb')
+            self.karb_scarce = True
+            self.ECON = False
+            self.RUSH = True
+        # if fuel resource scarce, RUSH fuel
+        if len(bc.map_process.fuel_mines) < 7:
+            bc.log('    fuel resource scarce, RUSH fuel')
+            self.fuel_scarce = True
+            self.ECON = False
+            self.RUSH = True
+
+    def distance_of_castles(self, bc, loc):
+        """ returns straight line distance """
+        horizontal = bc.map_process.horizontal_reflection
+        x, y = loc
+        map_size = bc.map_process.map_size
+        d = map_size
+        if horizontal:
+            d = abs(map_size - 2 * x)
+        else:
+            d = abs(map_size - 2 * y)
+        return d
+
 
     def get_rush_targets(self, bc):
         """

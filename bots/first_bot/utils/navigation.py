@@ -442,8 +442,8 @@ class Navigation(object):
                 bc.log('next_tile: jumping in trajectory')
                 bc.stuck = 0
                 step = difference_to(loc, siguiente)
-                self.trajectory.remove(self.trajectory[0])
                 self.trajectory.remove(self.trajectory[1 % len(self.trajectory)])
+                self.trajectory.remove(self.trajectory[0])
                 return step
 
             siguiente = self.trajectory[0]
@@ -473,24 +473,24 @@ class Navigation(object):
                 bc.stuck = 0
                 return (0, 0)
 
-            # if can_move(bc, *add_dir(loc, goal_dir)):
-            #     bc.log('moving in goal dir')
-            #     return goal_dir  # Move in direction
-            #
-            # # If cannot move:
-            # # Try to jump further
-            # bc.log('trying to jump')
-            # jump_dirs = jump_directions(bc, goal_dir)
-            # for dir in jump_dirs:
-            #     if can_move(bc, *add_dir(loc, dir)):
-            #         bc.log('jumping in dir: {}'.format(dir))
-            #         return dir
+            if can_move(bc, *add_dir(loc, goal_dir)):
+                bc.log('moving in goal dir')
+                return goal_dir  # Move in direction
+
+            # If cannot move:
+            # Try to jump further
+            bc.log('trying to jump')
+            jump_dirs = jump_directions(bc, goal_dir)
+            for dir in jump_dirs:
+                if can_move(bc, *add_dir(loc, dir)):
+                    bc.log('jumping in dir: {}'.format(dir))
+                    return dir
 
             # Proper pathfind it
             bc.log('unable to jump, a-star this mofo')
 
             # Create the trajectory with a* to the target or to a close point
-            next_tiles, cost_left = self.create_trajectory(bc, loc, target)
+            next_tiles, cost_left = self.fine_create_trajectory(bc, loc, target)
             # self.came_from,
             # self.cost_so_far)
             # next_tile, cost_left = {}, {}
@@ -505,7 +505,7 @@ class Navigation(object):
             # bc.log('expected_cost')
             # bc.log(cost_left)
 
-        bc.stuck += 1
+        # bc.stuck += 1
         bc.log('exit at the end')
         return (0, 0)
 
@@ -654,7 +654,7 @@ class Navigation(object):
 
         # If we dont have a came from and cost so far
         # if not bool(came_from) and not (bool(cost_so_far)):
-        bc.log('starting a*')
+        bc.log('starting fine a*')
         came_from = {}
         cost_so_far = {}
         came_from[start] = None

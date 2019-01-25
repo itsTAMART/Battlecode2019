@@ -144,6 +144,7 @@ def pilgrim(self):
                 self.log('my mine is occupied')
                 self.stuck += 1
                 if self.stuck > 3:  # for more than 3 turns
+                    self.stuck = 0
                     # go to scout
                     self.destination = reflect(self, self.spawn_loc, self.map_process.horizontal_reflection)
                     self.nav.set_destination(self.destination)  # Go there

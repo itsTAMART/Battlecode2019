@@ -76,6 +76,7 @@ class MyRobot(BCAbstractRobot):
             self.combat = CombatManager(self)
             self.tactics = Tactics(self)
             self.map_process.get_initial_game_info(self)
+            self.tactics.game_type_1(self)
 
         """
         GENERAL PRE-TURN HERE

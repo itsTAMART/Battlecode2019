@@ -265,6 +265,10 @@ class MapPreprocess(object):
         mine_type = ''
         mine = None
 
+        # Only build for the mines of that church or castle
+        if self.mine_index > (len(self.karb_mines) + len(self.fuel_mines)):
+            return mine
+
         # CHOOSE
         if self.mine_index % 2 == 0:  # Here we go for karb or fuel
             mine_type = 'k'
