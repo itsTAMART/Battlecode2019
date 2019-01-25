@@ -157,7 +157,7 @@ def pilgrim(self):
     if len(self.combat.i_am_attackable) > 0:
         self.log('Combat Movement')
         combat_tile = self.combat.best_spot_to_move(self)
-        moving_dir = difference_to(locate(bc.me), combat_tile)
+        moving_dir = difference_to(locate(self.me), combat_tile)
         self.log('moving dir: {}'.format(moving_dir))
         if can_move(self, *combat_tile):
             return self.move(*moving_dir)

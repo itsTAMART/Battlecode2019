@@ -298,6 +298,7 @@ class MapPreprocess(object):
                 mine = self.next_karb_mine(bc)
         else:
             mine = None
+            self.mine_index -= 1
 
         self.mine_index += 1
         return mine
