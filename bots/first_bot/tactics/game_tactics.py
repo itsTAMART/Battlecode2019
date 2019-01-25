@@ -31,6 +31,10 @@ if no pilgrims left to mine start creating a PHROPHETS for ARCHER LATTICE
 
 """
 
+RUSH_DISTANCE = 26
+ECON_DISTANCE = 34
+SMALL_MAP = 37
+BIG_MAP = 58
 
 # TODO
 class Tactics(object):
@@ -49,13 +53,13 @@ class Tactics(object):
         """ to be called in the first turn """
         bc.log('Deciding game type')
         # if small map, RUSH
-        if bc.map_process.map_size < 40:  # SMALL MAP
+        if bc.map_process.map_size < SMALL_MAP:  # SMALL MAP
             bc.log('    small map, RUSH')
             self.ECON = False
             self.RUSH = True
 
         # if map big, ECON
-        if bc.map_process.map_size > 58:  # SMALL MAP
+        if bc.map_process.map_size > BIG_MAP:  # SMALL MAP
             bc.log('    map big, ECON')
             self.ECON = True
             self.RUSH = False
@@ -75,14 +79,14 @@ class Tactics(object):
             self.FAKE_RUSH = True
 
         # if close castle, RUSH
-        if self.distance_of_castles(bc, locate(bc.me)) < 26:
+        if self.distance_of_castles(bc, locate(bc.me)) < RUSH_DISTANCE:
             bc.log('    close castle, RUSH')
             self.close_castle = True
             self.ECON = False
             self.RUSH = True
 
         # if far castle, ECON
-        if self.distance_of_castles(bc, locate(bc.me)) > 34:
+        if self.distance_of_castles(bc, locate(bc.me)) > ECON_DISTANCE:
             bc.log('    far castle, ECON')
             self.close_castle = False
             self.ECON = True
@@ -100,6 +104,12 @@ class Tactics(object):
             self.fuel_scarce = True
             self.ECON = False
             self.RUSH = True
+        # Do not rush if other castle is already rushing
+        if self.other_castle_is_rushing(bc):
+            bc.log('    not rush if other castle is already rushing')
+            self.ECON = True
+            self.RUSH = False
+
 
     def distance_of_castles(self, bc, loc):
         """ returns straight line distance """
@@ -135,11 +145,31 @@ class Tactics(object):
 
         targets.append(rush_target)
         targets.append(rush_target)
-        targets.append(rush_target)
         targets.append('m')
+        targets.append(rush_target)
         targets.append(rush_target)
 
         return targets
+
+    def other_castle_is_rushing(self, bc):
+        """ looks if there is other castle which is first in queue and is rushing too """
+        # Only for castles
+        if bc.me.unit != SPECS["CASTLE"]:
+            return False
+
+        for r in bc.get_visible_robots():
+            c_talk = r.castle_talk
+            if c_talk == 0:
+                continue
+
+            if abs(bc.map_process.map_size - (2 * (c_talk % 64))) < RUSH_DISTANCE \
+                    or bc.map_process.map_size < SMALL_MAP:
+                bc.log('    other castle is already rushing')
+                return True
+
+        bc.log('    no castles rushing')
+        return False
+
 
     def under_attack(self, bc):
         """

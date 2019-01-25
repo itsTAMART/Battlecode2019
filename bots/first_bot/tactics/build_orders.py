@@ -11,8 +11,8 @@ ECON_BUILD_ORDER = ["PILGRIM", "PILGRIM", "PILGRIM",
                     "PILGRIM", "PILGRIM"]
 ECON_TARGET_ORDER = ["m", "m", "m", "m", "m"]
 
-RUSH_BUILD_ORDER = ["PILGRIM", "PROPHET", "PROPHET",
-                    "PILGRIM", "PREACHER"]
+RUSH_BUILD_ORDER = ["PILGRIM", "PROPHET", "PILGRIM", "PROPHET", "PREACHER"]
+
 
 BUILD_ORDER = ECON_BUILD_ORDER
 
@@ -121,6 +121,11 @@ class BuildOrderManager(object):
             Defensive lattice
 
         """
+
+        bc.log('    reserve_karb: {}'.format(self.reserve_karb))
+        bc.log('    reserve_fuel: {}'.format(self.reserve_fuel))
+
+
         if bc.karbonite < self.reserve_karb and bc.fuel < self.reserve_fuel:
             return None
 
