@@ -7,15 +7,29 @@ from ..utils import *
 
 
 def first_turn_preacher(self):
-    # TODO Receive location to attack or defend
-    #
-    self.spawn_loc = locate(self.me)
-    self.destination = None
+    # Find your closest target
+    attack_loc = None
+    attack_loc = self.comms.receive_target(self)
+    self.log('My attack_loc in: {}'.format(attack_loc))
 
+    #  set the objective to the mine
+
+    self.nav.set_destination(attack_loc)
+    self.destination = attack_loc
+
+    self.spawn_loc = locate(self.me)
 
 
 def preacher(self):
-    """ The BORING PROPHET from the Life of Bryan """
+    """
+     Ezekiel 25:17. "The path of the righteous man is beset on all sides by the
+     inequities of the selfish and the tyranny of evil men. Blessed is he who, in
+     the name of charity and good will, shepherds the weak through the valley of the
+     darkness. For he is truly his brother's keeper and the finder of lost children.
+     And I will strike down upon thee with great vengeance and furious anger those
+     who attempt to poison and destroy my brothers. And you will know I am the Lord
+     when I lay my vengeance upon you.
+     """
 
     """
     ATTACKING BUSSINESS

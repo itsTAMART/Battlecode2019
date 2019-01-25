@@ -207,7 +207,8 @@ class Tactics(object):
         :return: tuple with a location
         """
         # TODO implement it
-        return None
+        rush_target = bc.map_process.closest_enemy_castle(bc)
+        return rush_target
 
 
 #

@@ -7,8 +7,7 @@ from ..utils import *
 
 
 def first_turn_prophet(self):
-    # TODO Receive location to attack or defend
-    #
+
     # Find your closest mine
     attack_loc = None
     attack_loc = self.comms.receive_target(self)

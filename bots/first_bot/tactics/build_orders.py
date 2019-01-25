@@ -182,21 +182,21 @@ class BuildOrderManager(object):
                 else:
                     bc.log('    no more pilgrims left to build')
 
-        # # Defensive lattice
-        # # Offensive lattice?
-        # unit = bc.tactics.lategame_unit(bc)
-        # target = bc.tactics.lategame_target(bc)
-        # if self.enough_for_unit(bc, unit):
-        #     if target is not None:
-        #         order = dir_build(bc, unit, target)
-        #         bc.log('unit: {}, target: {}'.format(unit, target))
-        #         if order is not None:
-        #             bc.comms.send_loc(bc, target, 2,
-        #                               code=T2C['YOUR_MINE_IS'])  # SEND THE unit THE LOCATION TO ITS target
-        #             self.built_correctly(bc)
-        #             return order
-        #         else:
-        #             bc.log('could not build')
+        # Defensive lattice
+        # Offensive lattice?
+        unit = bc.tactics.lategame_unit(bc)
+        target = bc.tactics.lategame_target(bc)
+        if self.enough_for_unit(bc, unit):
+            if target is not None:
+                order = dir_build(bc, unit, target)
+                bc.log('unit: {}, target: {}'.format(unit, target))
+                if order is not None:
+                    bc.comms.send_loc(bc, target, 2,
+                                      code=T2C['YOUR_MINE_IS'])  # SEND THE unit THE LOCATION TO ITS target
+                    self.built_correctly(bc)
+                    return order
+                else:
+                    bc.log('could not build')
 
         # Finally return whatever you chose, probably None
         bc.log('not building this time')
