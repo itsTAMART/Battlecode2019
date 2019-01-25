@@ -339,6 +339,77 @@ class MapPreprocess(object):
                 closest_castle = castle
         return closest_castle
 
+    # TODO test
+    def closest_e_castle_for_units(self, bc):
+        """ closest enemy castle for a unit """
+        bc.log('closest enemy castle')
+        min_dist = 99999
+        closest_castle = None
+        loc = locate(bc.me)
+
+        castle_locs = [locate(r) for r in bc.combat.my_castles if r.unit == SPECS["CASTLE"]]
+
+        # Seen enemy castles
+        for castle in bc.combat.enemy_castles:
+            bc.log('castle: {}'.format(locate(castle)))
+            dist = distance(loc, locate(castle))
+            bc.log('dist: {}'.format(dist))
+            if int(dist) < int(min_dist):
+                min_dist = dist
+                closest_castle = locate(castle)
+
+        # For previously known enemy castles
+        for castle in self.enemy_castles:
+            bc.log('castle: {}'.format(castle))
+            dist = distance(loc, castle)
+            bc.log('dist: {}'.format(dist))
+            if int(dist) < int(min_dist):
+                min_dist = dist
+                closest_castle = castle
+
+        # Reflection of my castles
+        for m_castle in castle_locs:
+            castle = reflect(bc, m_castle, self.is_horizontal_reflect())
+            if not loc_in_list(castle, self.enemy_castles):
+                self.enemy_castles.append(castle)
+            bc.log('castle: {}'.format(castle))
+            dist = distance(loc, castle)
+            bc.log('dist: {}'.format(dist))
+            if int(dist) < int(min_dist):
+                min_dist = dist
+                closest_castle = castle
+
+        return closest_castle
+
+    # TODO test
+    def fuel_rush_mine(self, bc):
+        """ only for castles """
+        my_loc = locate(bc.me)
+        enemy_castle = reflect(bc, my_loc, self.horizontal_reflection)
+        rush_mines = []
+        for mine in self.fuel_mines:
+            if man_distance(mine, my_loc) < 6 or man_distance(mine, enemy_castle) < 6:
+                continue
+            else:
+                rush_mines.append(mine)
+
+        return closest(bc, enemy_castle, rush_mines)
+
+    # TODO test
+    def karb_rush_mine(self, bc):
+        """ only for castles """
+        my_loc = locate(bc.me)
+        enemy_castle = reflect(bc, my_loc, self.horizontal_reflection)
+        rush_mines = []
+        for mine in self.karb_mines:
+            if man_distance(mine, my_loc) < 6 or man_distance(mine, enemy_castle) < 6:
+                continue
+            else:
+                rush_mines.append(mine)
+
+        return closest(bc, enemy_castle, rush_mines)
+
+
 
     def get_church_spot(self, bc, loc):
         """ This will get all mines close to the loc and get adjacents and rate them"""
@@ -359,7 +430,7 @@ class MapPreprocess(object):
 
         for mine in mines:
             # spots = walkable_adjacent_tiles(bc, *mine)
-            spots = walkable_adjacent_tiles(bc, *mine)
+            spots = passable_adjacent_tiles(bc, *mine)
             # bc.log('spots')
             # bc.log('{}'.format(spots))
             for spot in spots:

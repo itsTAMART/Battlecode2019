@@ -73,13 +73,6 @@ def pilgrim(self):
     if full_of_karb(self) or full_of_fuel(self):
         # self.destination = self.spawn_loc # Destination represents your mine
 
-        deposits = [locate(deposit) for deposit in self.combat.get_deposit()]
-        self.log('deposits: {}'.format(deposits))
-        my_depo = closest(self, locate(self.me), deposits)
-        self.log('my depo: {}'.format(my_depo))
-
-        self.nav.set_destination(my_depo)
-
         # if im_at(self, self.spawn_loc):
         #     # AT SPAWN
         for castle in self.combat.get_deposit():
@@ -90,6 +83,14 @@ def pilgrim(self):
                 self.nav.set_destination(self.destination)  # GO BACK TO THE MINE
                 return self.give(*direction_to(locate(self.me), locate(castle)),
                                  self.me.karbonite, self.me.fuel)
+
+        deposits = [locate(deposit) for deposit in self.combat.get_deposit()]
+        self.log('deposits: {}'.format(deposits))
+        my_depo = closest(self, locate(self.me), deposits)
+        self.log('my depo: {}'.format(my_depo))
+
+        self.nav.set_destination(my_depo)
+
 
     """
     PART 2 of CHURCH BUILDING
@@ -145,7 +146,7 @@ def pilgrim(self):
                 self.stuck += 1
                 if self.stuck > 3:  # for more than 3 turns
                     self.stuck = 0
-                    # go to scout
+                    # go to scout # TODO change it to enemy castle
                     self.destination = reflect(self, self.spawn_loc, self.map_process.horizontal_reflection)
                     self.nav.set_destination(self.destination)  # Go there
 

@@ -63,31 +63,39 @@ class Tactics(object):
         # if 3 castles, ECON
         bc.map_process.get_n_castles(bc)
         if bc.map_process.n_castles > 2:
-            bc.log('    s3 castles, ECON')
+            bc.log('    3 castles, ECON')
             self.ECON = True
             self.RUSH = False
 
         # else FAKE_RUSH
         if bc.map_process.n_castles < 3:
-            bc.log('    <= 2 castles, FAKERUSH')
+            bc.log('    < 3 castles, FAKERUSH')
             self.ECON = False
             self.RUSH = True
             self.FAKE_RUSH = True
 
         # if close castle, RUSH
         if self.distance_of_castles(bc, locate(bc.me)) < 26:
+            bc.log('    close castle, RUSH')
             self.close_castle = True
             self.ECON = False
             self.RUSH = True
 
+        # if far castle, ECON
+        if self.distance_of_castles(bc, locate(bc.me)) > 34:
+            bc.log('    far castle, ECON')
+            self.close_castle = False
+            self.ECON = True
+            self.RUSH = False
+
         # if karb resource scarce, RUSH karb
-        if len(bc.map_process.karb_mines) < 7:
+        if len(bc.map_process.karb_mines) < 8:
             bc.log('    karb resource scarce, RUSH karb')
             self.karb_scarce = True
             self.ECON = False
             self.RUSH = True
         # if fuel resource scarce, RUSH fuel
-        if len(bc.map_process.fuel_mines) < 7:
+        if len(bc.map_process.fuel_mines) < 9:
             bc.log('    fuel resource scarce, RUSH fuel')
             self.fuel_scarce = True
             self.ECON = False
@@ -95,7 +103,7 @@ class Tactics(object):
 
     def distance_of_castles(self, bc, loc):
         """ returns straight line distance """
-        horizontal = bc.map_process.horizontal_reflection
+        horizontal = bc.map_process.is_horizontal_reflect()
         x, y = loc
         map_size = bc.map_process.map_size
         d = map_size
@@ -105,15 +113,33 @@ class Tactics(object):
             d = abs(map_size - 2 * y)
         return d
 
-
+    # TODO test
     def get_rush_targets(self, bc):
         """
          returns a castle or a mine
         :param bc: object
         :return:  list of targets for spawning the bots
         """
-        # TODO implement it
-        return []
+
+        targets = []
+        rush_target = None
+
+        if self.fuel_scarce:
+            rush_target = bc.map_process.fuel_rush_mine(bc)
+        if self.karb_scarce:
+            rush_target = bc.map_process.karb_rush_mine(bc)
+        if self.close_castle:
+            rush_target = bc.map_process.closest_enemy_castle(bc)
+        if rush_target is None:
+            rush_target = bc.map_process.closest_enemy_castle(bc)
+
+        targets.append(rush_target)
+        targets.append(rush_target)
+        targets.append(rush_target)
+        targets.append('m')
+        targets.append(rush_target)
+
+        return targets
 
     def under_attack(self, bc):
         """

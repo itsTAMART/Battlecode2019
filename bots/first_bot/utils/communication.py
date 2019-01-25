@@ -270,7 +270,27 @@ class Communications(object):
             bc.log('receiving a new church')
             bc.build_order.church_built(bc)
 
-
+    def receive_target(self, bc):
+        bc.log('Receiving target')
+        # find the castle siganl and receive it
+        for robot in self.signaling:
+            if robot.unit == SPECS['CASTLE'] or robot.unit == SPECS['CHURCH']:
+                # bc.log('robot {}, message {}'.format(robot, robot.signal))
+                code, mine = self.receive_loc(bc, robot, robot.signal)
+                bc.log('    target: {}, code: {}'.format(mine, code))
+                if code == T2C['YOUR_MINE_IS']:
+                    # Debug
+                    bc.log('    target received correctly')
+                    if not is_a_mine(bc, mine):
+                        bc.log('    It is not a mine')
+                        bc.church_spot = (-1, -1)  # Hacky way to avoid checking for church if you are scouting
+                    return mine
+                else:
+                    bc.log('    not appropriate code')
+        else:
+            bc.log('    no castle found')
+        bc.log('    couldnt find mine')
+        return locate(bc.me)
 
 
     def _reset_lists(self):

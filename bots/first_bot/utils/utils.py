@@ -311,9 +311,13 @@ def closest_passable(bc, origin, tiles):
 # EXAMPLEFUNKY CODE
 
 def reflect(bc, loc, horizontal=True):
+    # TODO fix this
+    bc.log('        horizontal: {}'.format(horizontal))
     map_size = len(bc.passable_map)
-    v_reflec = [map_size - loc[0], loc[1]]
-    h_reflec = [loc[0], map_size - loc[1]]
+    v_reflec = [loc[0], map_size - loc[1]]
+    h_reflec = [map_size - loc[0], loc[1]]
+    bc.log('        v_reflec: {}'.format(v_reflec))
+    bc.log('        h_reflec: {}'.format(h_reflec))
     if horizontal:
         return h_reflec
     else:
