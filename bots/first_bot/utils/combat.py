@@ -145,10 +145,10 @@ class CombatManager(object):
         return enemy
 
     # do we outgun castle?
+    # TODO test
     def can_we_outgun_castle(self, bc):
-        # TODO do we outgun castle?
 
-        pass
+        return (len(self.my_military) - len(self.enemy_military) > 3)
 
     # TODO new targeting to oneshot castle if possible
     # TODO target civil units
@@ -159,7 +159,8 @@ class CombatManager(object):
 
     # TODO test
     def are_there_closeby_churches(self, bc):
-        for church in self.my_castles:
+        bc.log('        my_castles: {}'.format(bc.map_process.my_castles))
+        for church in bc.map_process.my_castles:
             if man_distance(locate(bc.me), church) < 7:
                 return True
         return False
@@ -170,8 +171,7 @@ class CombatManager(object):
 
     def are_enemies_near(self, bc):
         """ True if yes """
-        enemy_castles = [c for c in self.enemy_castles if bc.is_visible(c)]
-        return (len(enemy_castles) > 0) or (len(self.enemy_civil) > 0) or (len(self.enemy_military) > 0)
+        return (len(self.enemy_castles) > 0) or (len(self.enemy_civil) > 0) or (len(self.enemy_military) > 0)
 
     def _reset_lists(self):
         """ resets all lists for each turn """

@@ -74,8 +74,8 @@ class Tactics(object):
         # else FAKE_RUSH
         if bc.map_process.n_castles < 3:
             bc.log('    < 3 castles, FAKERUSH')
-            self.ECON = False
-            self.RUSH = True
+            self.ECON = True
+            self.RUSH = False
             self.FAKE_RUSH = True
 
         # if close castle, RUSH
