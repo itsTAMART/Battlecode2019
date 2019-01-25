@@ -229,7 +229,7 @@ class Communications(object):
         """ check if there is going to be any church built soon """
 
         # Check if any pilgrim is going to build a church
-        for robot in self.signaling:
+        for robot in bc.get_visible_robots():
             mssg, id = self.receive_castle_talk(robot)
             if mssg == 0:
                 # bc.log('not valid coord_1')
@@ -318,7 +318,7 @@ class Communications(object):
         bc.log('Check if target done')
 
         # Check if any pilgrim is going to build a church
-        for robot in self.signaling:
+        for robot in bc.get_visible_robots():
             mssg, id = self.receive_castle_talk(robot)
             if mssg == 0:
                 # bc.log('not valid coord_1')
