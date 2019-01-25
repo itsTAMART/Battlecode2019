@@ -83,7 +83,8 @@ class CombatManager(object):
                     self.enemy_civil.append(r)
                 if r.unit == SPECS['CRUSADER'] \
                         or r.unit == SPECS['PROPHET'] \
-                        or r.unit == SPECS['PREACHER']:
+                        or r.unit == SPECS['PREACHER'] \
+                        or r.unit == SPECS['CASTLE']:
                     self.enemy_military.append(r)
 
                     # Am I attackable by it?
@@ -144,11 +145,46 @@ class CombatManager(object):
                     enemy = r
         return enemy
 
-    # do we outgun castle?
     # TODO test
+    def best_spot_to_move(self, bc):
+        bc.log('Choosing best tile for combat')
+        if self.favorable_fight(bc):
+            return (0, 0)
+
+        candidates = {}
+        max_points = -9999
+        chosen_spot = None
+        tiles = passable_movement_tiles(bc, *locate(bc.me))
+
+        for spot in tiles:
+            candidates[spot] = 0
+
+        for robot in self.enemy_military:
+            for spot in tiles:
+                if can_be_attacked(spot, robot):
+                    candidates[spot] -= 1
+
+        bc.log('Good Movements {}'.format(candidates))
+        # May break
+        for spot in candidates.keys():
+            points = candidates[spot]
+            if points > max_points:
+                max_points = points
+                chosen_spot = spot
+
+        return tuple([int(x) for x in chosen_spot.split(',')])  # FUCK JAVASCRIPT AND YOUR TRANSPILER, REALLY
+
+
+    # TODO test
+    # do we outgun castle?
     def can_we_outgun_castle(self, bc):
 
         return (len(self.my_military) - len(self.enemy_military) > 3)
+
+    def favorable_fight(self, bc):
+
+        return (len(self.my_military) - len(self.enemy_military) > 1)
+
 
     # TODO new targeting to oneshot castle if possible
     # TODO target civil units

@@ -150,15 +150,22 @@ def pilgrim(self):
                     self.destination = reflect(self, self.spawn_loc, self.map_process.horizontal_reflection)
                     self.nav.set_destination(self.destination)  # Go there
 
+    # if Im not on attack range
+    #   Keep doing ma thing, check next on trajectory not in range
+    # if im on attack range
+    #   move away
+    if len(self.combat.i_am_attackable) > 0:
+        self.log('Combat Movement')
+        combat_tile = self.combat.best_spot_to_move(self)
+        moving_dir = difference_to(locate(bc.me), combat_tile)
+        self.log('moving dir: {}'.format(moving_dir))
+        if can_move(self, *combat_tile):
+            return self.move(*moving_dir)
 
 
     # TODO do it
     # If you see enemy unit
     # Report to castletalk
-    # if Im not on attack range
-    #   Keep doing ma thing, check next on trajectory not in range
-    # if im on attack range
-    #   move away
     # check if my military to help me
     #   signal it to them
 

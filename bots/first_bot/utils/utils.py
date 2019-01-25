@@ -7,7 +7,7 @@ import random
 from bots.first_bot.utils import *
 
 
-# TODO test
+
 def is_occupied(bc, x, y):
     """
     Check if that tile is occupied, impassable or outside the map
@@ -85,6 +85,25 @@ def is_in_range(robot, x, y, range_squared):
     dy = my_y - y
 
     return (dx ** 2 + dy ** 2) <= range_squared
+
+
+def inside_range(loc1, loc2, range_squared):
+    """
+    Check if a target is within SQUARED range of the robot
+    :param robot: robot object eg bc.me
+    :param x: target_x
+    :param y: target_y
+    :param range_squared: true range**2
+    :return: True if it is in range, False if not
+    """
+    x, y = loc2
+    my_x, my_y = loc1
+
+    dx = my_x - x
+    dy = my_y - y
+
+    return (dx ** 2 + dy ** 2) <= range_squared
+
 
 
 def can_build(bc, unit_name, x, y):
@@ -264,6 +283,17 @@ def am_i_attackable(bc_object, robot):
         # Within attack range
         return is_in_range(bc_object.me, robot.x, robot.y, u_specs['ATTACK_RADIUS'][1]) \
                and not is_in_range(bc_object.me, robot.x, robot.y, u_specs['ATTACK_RADIUS'][0])
+    return False
+
+
+def can_be_attacked(loc, robot):
+    """ can I get attacked by robot """
+    # is it an attacking unit
+    u_specs = SPECS['UNITS'][robot.unit]
+    if u_specs['ATTACK_DAMAGE'] is not None:
+        # Within attack range
+        return inside_range(loc, locate(robot), u_specs['ATTACK_RADIUS'][1]) \
+               and not inside_range(loc, locate(robot), u_specs['ATTACK_RADIUS'][0])
     return False
 
 
