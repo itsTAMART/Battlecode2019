@@ -155,15 +155,12 @@ class CombatManager(object):
     # TODO the 3 different targetings needed
     # TODO check if i have been attacked and if im going to lose the combat then retreat
 
-    # TODO test
-    def get_churches(self):
-        churches = [r for r in self.my_castles if r.unit == SPECS["CHURCH"]]
-        return churches
+
 
     # TODO test
     def are_there_closeby_churches(self, bc):
-        for church in self.get_churches():
-            if man_distance(locate(bc.me), locate(church)) < 7:
+        for church in self.my_castles:
+            if man_distance(locate(bc.me), church) < 7:
                 return True
         return False
 
