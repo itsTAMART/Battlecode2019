@@ -38,7 +38,8 @@ class CombatManager(object):
 
         im_military = bc.me.unit == SPECS['CRUSADER'] \
                       or bc.me.unit == SPECS['PROPHET'] \
-                      or bc.me.unit == SPECS['PREACHER']
+                      or bc.me.unit == SPECS['PREACHER'] \
+                      or bc.me.unit == SPECS['CASTLE']
 
         for r in bc.vision_list:  # For each robot visible
             # Check if is signaling and not in vision range

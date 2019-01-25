@@ -69,6 +69,10 @@ def prophet(self):
             # Notify to castle
             self.comms.notify_target_done(self, self.destination)
 
+            # FIND AND GO FOR NEXT MINE
+            self.log('Rushing next mine')
+            self.destination = self.map_process.find_next_mine_to_attack(self, self.destination)
+            self.nav.set_destination(self.destination)
 
 
 

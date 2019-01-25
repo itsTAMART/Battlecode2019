@@ -146,9 +146,10 @@ def pilgrim(self):
                 self.stuck += 1
                 if self.stuck > 3:  # for more than 3 turns
                     self.stuck = 0
-                    # go to scout # TODO change it to enemy castle
-                    self.destination = reflect(self, self.spawn_loc, self.map_process.horizontal_reflection)
-                    self.nav.set_destination(self.destination)  # Go there
+                    # FIND AND GO FOR NEXT MINE
+                    self.log('Rushing next mine')
+                    self.destination = self.map_process.find_next_mine_to_attack(self, self.destination)
+                    self.nav.set_destination(self.destination)
 
     # if Im not on attack range
     #   Keep doing ma thing, check next on trajectory not in range

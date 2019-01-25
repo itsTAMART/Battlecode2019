@@ -410,6 +410,18 @@ class MapPreprocess(object):
 
         return closest(bc, enemy_castle, rush_mines)
 
+    # TODO test
+    def find_next_mine_to_attack(self, bc, loc):
+
+        self.karb_mines = [mine for mine in self.karb_mines if man_distance(loc, mine) > 7]
+        self.fuel_mines = [mine for mine in self.fuel_mines if man_distance(loc, mine) > 7]
+
+        mines = self.fuel_mines
+        for mine in self.karb_mines:
+            mines.append(mine)
+
+        return closest(bc, bc.destination, mines)
+
 
 
     def get_church_spot(self, bc, loc):

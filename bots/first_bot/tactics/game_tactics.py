@@ -188,7 +188,7 @@ class Tactics(object):
         """
         # TODO implement it
         unit_types = ["CRUSADER", "PROPHET", "PREACHER"]
-        return "CRUSADER"
+        return "PROPHET"
 
     def lategame_unit(self, bc):
         """
@@ -198,7 +198,7 @@ class Tactics(object):
         """
         # TODO implement it
         unit_types = ["CRUSADER", "PROPHET", "PREACHER"]
-        return "CRUSADER"
+        return "PROPHET"
 
     def lategame_target(self, bc):
         """
