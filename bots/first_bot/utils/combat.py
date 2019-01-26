@@ -184,7 +184,11 @@ class CombatManager(object):
 
     def favorable_fight(self, bc):
 
-        return (len(self.my_military) - len(self.enemy_military) > 1)
+        return (len(self.my_military) - len(self.enemy_military) > 0)
+
+    def heavily_outgunned(self, bc):
+
+        return (len(self.my_military) - len(self.enemy_military) < 4)
 
 
     # TODO new targeting to oneshot castle if possible

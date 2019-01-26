@@ -188,7 +188,7 @@ class Tactics(object):
         """
         # TODO implement it
         unit_types = ["CRUSADER", "PROPHET", "PREACHER"]
-        return "PROPHET"
+        return "PREACHER"
 
     def lategame_unit(self, bc):
         """

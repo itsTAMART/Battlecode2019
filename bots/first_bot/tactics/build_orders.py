@@ -42,7 +42,12 @@ def dir_build(bc, unit_name, target):
     :return: True if you have materials to build unit
     """
     my_x, my_y = locate(bc.me)
-    dx, dy = bc.nav.goto(bc, target)
+    dir = bc.nav.goto(bc, target)
+    if dir is None:
+        return naive_build(bc, unit_name)
+    dx, dy = dir
+    if dx == dy == 0:
+        return naive_build(bc, unit_name)
     if can_build(bc, unit_name, my_x + dx, my_y + dy):
         bc.log("Building a {} at [{}, {}]".format(unit_name, bc.me['x'] + dx, bc.me['y'] + dy))
         return bc.build_unit(SPECS[unit_name], dx, dy)
@@ -257,15 +262,15 @@ class BuildOrderManager(object):
         bc.log('saving for church')
         self.issued_churches += 1
         if self.issued_churches % 2 == 1:  # Only increase the savings for each odd(impar) church
-            self.reserve_karb += 50
-            self.reserve_fuel += 200
+            self.reserve_karb += 50 / 2
+            self.reserve_fuel += 200 / 2
 
     # TODO test
     def church_built(self, bc):
         bc.log('church built')
-        if self.issued_churches % 2 == 1:  # Only decrease the savings for each odd(impar) church
-            self.reserve_karb -= 50
-            self.reserve_fuel -= 200
+        # if self.issued_churches % 2 == 1:  # Only decrease the savings for each odd(impar) church
+        self.reserve_karb -= 50
+        self.reserve_fuel -= 200
         self.issued_churches -= 1
         self.reserve_karb = max(self.reserve_karb, 0)
         self.reserve_fuel = max(self.reserve_fuel, 0)

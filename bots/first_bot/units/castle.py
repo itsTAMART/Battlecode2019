@@ -54,7 +54,7 @@ def castle(self):
         self.log('attack target: {}'.format(target))
         if can_attack(self, *locate(target)):
             self.log('attack:')
-            self.log(locate(target))  # TODO test
+            self.log(locate(target))
             return self.attack(*difference_to(locate(self.me), locate(target)))
 
 #

@@ -338,7 +338,10 @@ def closest_passable(bc, origin, tiles):
     """ from a list of tiles choose the one that is closest """
     d_tiles = [(distance(origin, tile), tile) for tile in tiles if is_not_occupied(bc, *tile)]
     # bc.log(sorted_tuples(d_tiles))
-    return sorted_tuples(d_tiles)[0][1]
+    if len(d_tiles) > 0:
+        return sorted_tuples(d_tiles)[0][1]
+    else:
+        return None
 
 # EXAMPLEFUNKY CODE
 

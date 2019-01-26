@@ -30,6 +30,7 @@ class MyRobot(BCAbstractRobot):
     destination = None
     spawn_loc = None
     church_spot = None
+    on_ring = False
 
     # Game info blob
     game_info = None

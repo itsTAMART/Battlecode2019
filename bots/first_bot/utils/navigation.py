@@ -365,7 +365,7 @@ class Navigation(object):
         # bc.log(loc)
         # bc.log(goal_dir)
         while is_occupied(bc_object, loc[0] + goal_dir[0], loc[1] + goal_dir[1]) \
-                and i < 5:
+                and i < 6:
 
             # or apply_dir(loc, goal_dir) in already_been: # doesn't work because `in` doesn't work :(
             # alternate checking either side of the goal dir, by increasing amounts (but not past directly backwards)

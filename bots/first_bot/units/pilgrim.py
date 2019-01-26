@@ -76,6 +76,7 @@ def pilgrim(self):
         # if im_at(self, self.spawn_loc):
         #     # AT SPAWN
         for castle in self.combat.get_deposit(self):
+            self.log('  - castle')
             if can_give(self, castle):
                 # GIVE the material
                 self.log('Direction to give {}'.format(direction_to(locate(self.me), castle)))
