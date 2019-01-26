@@ -264,10 +264,11 @@ class MapPreprocess(object):
         """
         mine_type = ''
         mine = None
+        index = self.mine_index % ((len(self.karb_mines) + len(self.fuel_mines)))
 
-        # Only build for the mines of that church or castle
-        if self.mine_index > (len(self.karb_mines) + len(self.fuel_mines)):
-            return mine
+        # # Only build for the mines of that church or castle
+        # if self.mine_index >= (len(self.karb_mines) + len(self.fuel_mines)):
+        #     return mine
 
         # CHOOSE
         if self.mine_index % 2 == 0:  # Here we go for karb or fuel
@@ -304,7 +305,7 @@ class MapPreprocess(object):
         return mine
 
     def next_karb_mine(self, bc):
-        if self.index_karb_mine > len(self.karb_mines):
+        if self.index_karb_mine >= len(self.karb_mines):
             bc.log(' no karb mines left for this castle ')
             mine = None
             return mine
@@ -314,7 +315,7 @@ class MapPreprocess(object):
         return mine
 
     def next_fuel_mine(self, bc):
-        if self.index_fuel_mine > len(self.fuel_mines):
+        if self.index_fuel_mine >= len(self.fuel_mines):
             bc.log(' no fuel mines left for this castle ')
             mine = None
             return mine

@@ -31,6 +31,7 @@ class MyRobot(BCAbstractRobot):
     spawn_loc = None
     church_spot = None
     on_ring = False
+    scouting = False
 
     # Game info blob
     game_info = None

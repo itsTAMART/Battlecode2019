@@ -20,6 +20,8 @@ def first_turn_pilgrim(self):
 
     self.nav.set_destination(my_mine)
     self.destination = my_mine
+    if not is_a_mine(self, self.destination):
+        self.scouting = True
     self.spawn_loc = location
     return
 
@@ -139,11 +141,13 @@ def pilgrim(self):
     """
     # TODO test
     # If close to my mine
-    if distance(locate(self.me), self.destination) < 4:
+    if distance(locate(self.me), self.destination) < 5:
+        self.log('  at destination ')
+
         # If it is occuppied
         if is_a_mine(self, self.destination):
             if is_occupied(self, *self.destination):
-                self.log('my mine is occupied')
+                self.log('  my mine is occupied')
                 self.stuck += 1
                 if self.stuck > 3:  # for more than 3 turns
                     self.stuck = 0
@@ -151,6 +155,35 @@ def pilgrim(self):
                     self.log('Rushing next mine')
                     self.destination = self.map_process.find_next_mine_to_attack(self, self.destination)
                     self.nav.set_destination(self.destination)
+
+        # # Too much, leave this
+        # if self.combat.heavily_outgunned(self):
+        #     # FIND AND GO FOR NEXT MINE
+        #     self.log('Rushing next mine')
+        #     self.destination = self.map_process.find_next_mine_to_attack(self, self.destination)
+        #     self.nav.set_destination(self.destination)
+        #     self.on_ring = False
+        #
+
+        if (not self.combat.are_enemies_near(self)) and self.scouting:
+            # if no enemies here
+            self.log('  no-one here, NOTIFYING')
+            # Notify to castle
+            self.comms.notify_target_done(self, self.destination)
+
+            if (self.church_spot[0] == self.church_spot[1] == -1):
+                # BUILDING A CHURCH FOR VICTORY
+                self.log('  getting good churchsport')
+                self.church_spot = self.map_process.get_church_spot(self, self.destination)
+                self.log('  Good Church Spot in {}'.format(self.church_spot))
+                self.comms.issue_church(self, self.church_spot)
+
+            # FIND AND GO FOR NEXT MINE
+            self.log('Rushing next mine')
+            self.destination = self.map_process.find_next_mine_to_attack(self, self.destination)
+            # self.nav.set_destination(self.destination)
+            self.on_ring = False
+
 
     # if Im not on attack range
     #   Keep doing ma thing, check next on trajectory not in range

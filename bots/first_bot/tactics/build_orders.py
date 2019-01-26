@@ -138,26 +138,27 @@ class BuildOrderManager(object):
 
         order = None
 
-        # Type of Game Build order
-        if self.build_step < 6 and bc.me.unit == SPECS["CASTLE"]:
-            bc.log('First turns build orders')
-            self.build_order_from_gametype(bc)
-            unit = self.current_order()
-            bc.log('    build order {}'.format(self.build_order))
-            bc.log('    trying to build {}'.format(unit))
-            if self.enough_for_unit(bc, unit):
-                # bc.log('enough pela')
-                target = self.current_target(bc)
-                bc.log('    target: {}'.format(target))
-                order = dir_build(bc, unit, target)
-                if order is not None:
-                    bc.comms.send_loc(bc, target, 2,
-                                      code=T2C['YOUR_MINE_IS'])  # SEND THE unit THE LOCATION TO ITS target
-                    self.built_correctly(bc)
-                    return order
-                else:
-                    bc.log('    all directions occupied')
-
+        # # Type of Game Build order
+        # if self.build_step < 6 and bc.me.unit == SPECS["CASTLE"]:
+        #     bc.log('First turns build orders')
+        #     self.build_order_from_gametype(bc)
+        #     unit = self.current_order()
+        #     bc.log('    build order {}'.format(self.build_order))
+        #     bc.log('    trying to build {}'.format(unit))
+        #     if self.enough_for_unit(bc, unit):
+        #         # bc.log('enough pela')
+        #         target = self.current_target(bc)
+        #         bc.log('    target: {}'.format(target))
+        #         order = dir_build(bc, unit, target)
+        #         if order is not None and target is not None:
+        #             bc.comms.send_loc(bc, target, 2,
+        #                               code=T2C['YOUR_MINE_IS'])  # SEND THE unit THE LOCATION TO ITS target
+        #             self.built_correctly(bc)
+        #             return order
+        #         else:
+        #             bc.log('    all directions occupied')
+        #     else:
+        #         bc.log('    not enough from what we saved')
         # Def from rush
         # Def pilgrim
         if len(bc.combat.enemy_military) > 0:
@@ -179,6 +180,7 @@ class BuildOrderManager(object):
         unit = "PILGRIM"
         if self.enough_for_unit(bc, unit):
             target = bc.map_process.next_mine(bc)
+            bc.log('    target: {}'.format(target))
             if target is not None:
                 order = dir_build(bc, unit, target)
                 bc.log('unit: {}, target: {}'.format(unit, target))
@@ -189,7 +191,8 @@ class BuildOrderManager(object):
                     return order
                 else:
                     bc.log('    no more pilgrims left to build')
-
+        else:
+            bc.log('    not enough to build pilgrims')
         # Defensive lattice
         # Offensive lattice?
         unit = bc.tactics.lategame_unit(bc)
@@ -267,8 +270,8 @@ class BuildOrderManager(object):
         bc.log('saving for church')
         self.issued_churches += 1
         if self.issued_churches % 2 == 1:  # Only increase the savings for each odd(impar) church
-            self.reserve_karb += 50 / 2
-            self.reserve_fuel += 200 / 2
+            self.reserve_karb += 50
+            self.reserve_fuel += 200
 
     # TODO test
     def church_built(self, bc):
@@ -287,8 +290,10 @@ class BuildOrderManager(object):
         unit_k_cost = SPECS['UNITS'][SPECS[unit]]['CONSTRUCTION_KARBONITE']
         unit_f_cost = SPECS['UNITS'][SPECS[unit]]['CONSTRUCTION_FUEL']
 
-        return bc.karbonite >= self.reserve_karb + unit_k_cost \
-               and bc.fuel >= self.reserve_fuel + unit_f_cost
+        # TODO uncomment after testing
+        # return bc.karbonite >= self.reserve_karb + unit_k_cost \
+        #        and bc.fuel >= self.reserve_fuel + unit_f_cost
+        return True
 
 
 #

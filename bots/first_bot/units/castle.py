@@ -39,6 +39,15 @@ def castle(self):
     self.comms.is_there_new_churches(self)
     self.comms.check_if_targets_done(self)
 
+    # Combat Routines
+    target = self.combat.lowest_health_enemy()
+    if target is not None:
+        self.log('attack target: {}'.format(target))
+        if can_attack(self, *locate(target)):
+            self.log('attack:')
+            self.log(locate(target))
+            return self.attack(*difference_to(locate(self.me), locate(target)))
+
     # Select what to build
     order = self.build_order.turn_build(self)
     if order is not None:
@@ -48,13 +57,6 @@ def castle(self):
         # self.log("Not building this time")
         pass
 
-    # Combat Routines
-    target = self.combat.lowest_health_enemy()
-    if target is not None:
-        self.log('attack target: {}'.format(target))
-        if can_attack(self, *locate(target)):
-            self.log('attack:')
-            self.log(locate(target))
-            return self.attack(*difference_to(locate(self.me), locate(target)))
+
 
 #

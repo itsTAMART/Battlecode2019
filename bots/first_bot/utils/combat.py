@@ -69,6 +69,7 @@ class CombatManager(object):
                     continue
                 if r.unit == SPECS['CRUSADER'] \
                         or r.unit == SPECS['PROPHET'] \
+                        or r.unit == SPECS['CASTLE'] \
                         or r.unit == SPECS['PREACHER']:
                     self.my_military.append(r)
                     continue
@@ -85,6 +86,7 @@ class CombatManager(object):
                 if r.unit == SPECS['CRUSADER'] \
                         or r.unit == SPECS['PROPHET'] \
                         or r.unit == SPECS['PREACHER'] \
+                        or r.unit == SPECS['CASTLE'] \
                         or r.unit == SPECS['CASTLE']:
                     self.enemy_military.append(r)
 
@@ -188,7 +190,7 @@ class CombatManager(object):
 
     def heavily_outgunned(self, bc):
 
-        return (len(self.my_military) - len(self.enemy_military) < 4)
+        return (len(self.my_military) - len(self.enemy_military) < -4)
 
 
     # TODO new targeting to oneshot castle if possible

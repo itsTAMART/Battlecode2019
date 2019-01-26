@@ -122,6 +122,9 @@ def prophet(self):
             # FIND AND GO FOR NEXT MINE
             self.log('Rushing next mine')
             self.destination = self.map_process.find_next_mine_to_attack(self, self.destination)
+            if self.destination is None:
+                self.destination = self.map_process.closest_e_castle_for_units(self)
+                self.map_preprocess.get_initial_game_info(self)
             self.nav.set_destination(self.destination)
             self.on_ring = False
 
@@ -134,6 +137,10 @@ def prophet(self):
             # FIND AND GO FOR NEXT MINE
             self.log('Rushing next mine')
             self.destination = self.map_process.find_next_mine_to_attack(self, self.destination)
+
+            if self.destination is None:
+                self.destination = self.map_process.closest_e_castle_for_units(self)
+                self.map_preprocess.get_initial_game_info(self)
             self.nav.set_destination(self.destination)
             self.on_ring = False
 
@@ -163,7 +170,7 @@ def prophet(self):
     """
 
     if distance(locate(self.me), self.destination) < 13 ** 2 and not self.on_ring:
-        new_objective = closest_passable(self, locate(self.me), ring(8, 10))
+        new_objective = closest_passable(self, locate(self.me), ring(9, 11))
         self.log('going to ring')
         self.nav.set_destination(new_objective)
         self.on_ring = True
