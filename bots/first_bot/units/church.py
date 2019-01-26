@@ -8,7 +8,7 @@ from ..tactics import *
 
 
 def first_turn_church(self):
-    self.build_order = BuildOrderManager()
+    self.build_order = BuildOrderManager(BUILD_ORDER)
 
     self.map_process.filter_mines_for_church(self)
     self.comms.hello_church(self)

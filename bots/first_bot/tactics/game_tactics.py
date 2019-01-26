@@ -139,9 +139,9 @@ class Tactics(object):
         if self.karb_scarce:
             rush_target = bc.map_process.karb_rush_mine(bc)
         if self.close_castle:
-            rush_target = bc.map_process.closest_enemy_castle(bc)
+            rush_target = bc.map_process.closest_e_castle_for_units(bc)
         if rush_target is None:
-            rush_target = bc.map_process.closest_enemy_castle(bc)
+            rush_target = bc.map_process.closest_e_castle_for_units(bc)
 
         targets.append(rush_target)
         targets.append(rush_target)
@@ -207,7 +207,8 @@ class Tactics(object):
         :return: tuple with a location
         """
         # TODO implement it
-        rush_target = bc.map_process.closest_enemy_castle(bc)
+        rush_target = bc.map_process.closest_e_castle_for_units(bc)
+
         return rush_target
 
 

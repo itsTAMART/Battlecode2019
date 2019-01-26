@@ -7,8 +7,8 @@ FIRST_BUILD_ORDER = ["PILGRIM", "CRUSADER", "CRUSADER",
                      "PILGRIM", "CRUSADER", "CRUSADER",
                      "PILGRIM", "PILGRIM", "CRUSADER"]
 
-ECON_BUILD_ORDER = ["PILGRIM", "PILGRIM", "PILGRIM",
-                    "PILGRIM", "PILGRIM"]
+ECON_BUILD_ORDER = ["PILGRIM", "PILGRIM", "PILGRIM", "PILGRIM", "PILGRIM"]
+
 ECON_TARGET_ORDER = ["m", "m", "m", "m", "m"]
 
 RUSH_BUILD_ORDER = ["PILGRIM", "PROPHET", "PROPHET", "PILGRIM", "PREACHER"]
@@ -127,6 +127,8 @@ class BuildOrderManager(object):
 
         """
 
+        bc.log('            karb: {}'.format(bc.karbonite))
+        bc.log('            fuel: {}'.format(bc.fuel))
         bc.log('    reserve_karb: {}'.format(self.reserve_karb))
         bc.log('    reserve_fuel: {}'.format(self.reserve_fuel))
 
@@ -135,6 +137,7 @@ class BuildOrderManager(object):
             return None
 
         order = None
+
         # Type of Game Build order
         if self.build_step < 6 and bc.me.unit == SPECS["CASTLE"]:
             bc.log('First turns build orders')
@@ -157,7 +160,7 @@ class BuildOrderManager(object):
 
         # Def from rush
         # Def pilgrim
-        if bc.tactics.under_attack(bc):
+        if len(bc.combat.enemy_military) > 0:
             bc.log('We are under attack')
             unit = bc.tactics.counter_unit(bc)
             target = locate(bc.combat.lowest_health_enemy())
@@ -240,14 +243,16 @@ class BuildOrderManager(object):
             return None
 
     def current_target(self, bc):
-        bc.log('build step: {}'.format(self.build_step))
-        # bc.log('target order: {}'.format(self.target_order))
+
+        bc.log('Current Target:')
+        bc.log('    build step: {}'.format(self.build_step))
+        bc.log('    target order: {}'.format(self.target_order))
         if self.build_step < len(self.target_order):
             target = self.target_order[self.build_step]
-            # bc.log('    target {}'.format(target))
+            bc.log('    target {}'.format(target))
             if target == 'm':
                 target = bc.map_process.next_mine(bc)
-                # bc.log('        target {}'.format(target))
+                bc.log('        target {}'.format(target))
             return target
         else:
             return None

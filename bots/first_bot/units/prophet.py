@@ -162,8 +162,8 @@ def prophet(self):
 
     """
 
-    if man_distance(locate(self.me), self.destination) < 13 and not self.on_ring:
-        new_objective = closest_passable(self, locate(self.me), ring(10, 11))
+    if distance(locate(self.me), self.destination) < 13 ** 2 and not self.on_ring:
+        new_objective = closest_passable(self, locate(self.me), ring(8, 10))
         self.log('going to ring')
         self.nav.set_destination(new_objective)
         self.on_ring = True
@@ -175,6 +175,9 @@ def prophet(self):
     # TODO
     moving_dir = self.nav.next_tile(self)
     self.log('moving dir: {}'.format(moving_dir))  # Move to closest non-occupied mine
+    if moving_dir is None:
+        self.log('movingdir is none')
+        return
     if moving_dir[0] == moving_dir[1] == 0:  # moving_dir == (0,0)
         if im_at(self, self.destination):  # Am I at my destination?
             self.log('no castle here, so next castle')

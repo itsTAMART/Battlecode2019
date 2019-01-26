@@ -8,7 +8,7 @@ from ..tactics import *
 
 
 def first_turn_castle(self):
-    self.build_order = BuildOrderManager()
+    self.build_order = BuildOrderManager(BUILD_ORDER)
 
     # Debug
     self.map_process.log_lists(self)

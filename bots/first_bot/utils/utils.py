@@ -169,10 +169,11 @@ def can_give(bc, loc):
     if bc.me.karbonite > 0 or bc.me.fuel > 0:
         # Si hay un robot en dx, dy
         for robot in bc.vision_list:
-            if robot.team == my_team and \
-                    robot.x == loc[0] + dx and \
-                    robot.y == loc[1] + dy:
-                return True
+            if bc.is_visible(robot):
+                if robot.team == my_team and \
+                        robot.x == loc[0] + dx and \
+                        robot.y == loc[1] + dy:
+                    return True
     # Return true
 
     return False
@@ -328,6 +329,9 @@ def is_adjacent(origin, destination):
 
 # TODO test
 def closest(bc, origin, tiles):
+    if origin is None:
+        origin = locate(bc.me)
+
     """ from a list of tiles choose the one that is closest """
     d_tiles = [(distance(origin, tile), tile) for tile in tiles]
     return sorted_tuples(d_tiles)[0][1]
@@ -336,6 +340,9 @@ def closest(bc, origin, tiles):
 # TODO test
 def closest_passable(bc, origin, tiles):
     """ from a list of tiles choose the one that is closest """
+    if origin is None:
+        origin = locate(bc.me)
+
     d_tiles = [(distance(origin, tile), tile) for tile in tiles if is_not_occupied(bc, *tile)]
     # bc.log(sorted_tuples(d_tiles))
     if len(d_tiles) > 0:
@@ -347,6 +354,8 @@ def closest_passable(bc, origin, tiles):
 
 def reflect(bc, loc, horizontal=True):
     # bc.log('        horizontal: {}'.format(horizontal))
+    if loc is None:
+        return None
     map_size = len(bc.passable_map)
     v_reflec = [loc[0], map_size - loc[1]]
     h_reflec = [map_size - loc[0], loc[1]]
@@ -366,6 +375,8 @@ def loc_in_list(elemento, lista):
     :param lista:
     :return:
     """
+    if elemento is None:
+        return False
     if len(lista) < 1:
         return False
     for e in lista:
