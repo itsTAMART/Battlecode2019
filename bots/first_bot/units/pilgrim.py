@@ -50,7 +50,7 @@ def pilgrim(self):
                 self.log('  getting good churchsport')
                 self.church_spot = self.map_process.get_church_spot(self, self.destination)
                 self.log('  Good Church Spot in {}'.format(self.church_spot))
-                self.comms.issue_church(self, self.church_spot)
+                # self.comms.issue_church(self, self.church_spot)
             else:
                 # My destination is not a church
                 self.log('  My destination is not a church')
@@ -104,6 +104,9 @@ def pilgrim(self):
         self.log('I want to build a church')
         if ready_to_church(self):
             self.log('  almost ready to build a church')
+            # Ask for the church
+            self.log('  notifying it')
+            self.comms.issue_church(self, self.church_spot)
             # When in place
             if is_adjacent(locate(self.me), self.church_spot):
                 self.log('  in place to build a church')

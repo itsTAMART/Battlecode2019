@@ -30,21 +30,12 @@ def preacher(self):
      who attempt to poison and destroy my brothers. And you will know I am the Lord
      when I lay my vengeance upon you.
      """
+    # TODO check if its going to be a FAKE RUSH
 
     """
-    ATTACKING BUSSINESS
+    COMUNICATIONS
 
     """
-
-    # ATTACK IF THERE IS A TARGET
-    # TODO change targeting to attack crusaders if they are together
-    # else focus prophets , attack preachers
-    # TODO if RUSH try to hit pilgrims, if you are not going to die from being hit
-
-    """
-       COMUNICATIONS
-
-       """
     # Second part of sending church_loc
     if self.comms.sent_first_target:
         self.log('  sending second part of the target_loc')
@@ -131,6 +122,17 @@ def preacher(self):
     if distance(locate(self.me), self.destination) < 5:
         self.log('  at destination ')
 
+        # Too much, leave this
+        if self.combat.heavily_outgunned(self):
+            # FIND AND GO FOR NEXT MINE
+            self.log('Rushing next mine')
+            self.destination = self.map_process.find_next_mine_to_attack(self, self.destination)
+            if self.destination is None:
+                self.destination = self.map_process.closest_e_castle_for_units(self)
+                self.map_preprocess.get_initial_game_info(self)
+            self.nav.set_destination(self.destination)
+            self.on_ring = False
+
         if not self.combat.are_enemies_near(self):
             # if no enemies here
             self.log('  no-one here, NOTIFYING')
@@ -140,6 +142,10 @@ def preacher(self):
             # FIND AND GO FOR NEXT MINE
             self.log('Rushing next mine')
             self.destination = self.map_process.find_next_mine_to_attack(self, self.destination)
+
+            if self.destination is None:
+                self.destination = self.map_process.closest_e_castle_for_units(self)
+                self.map_preprocess.get_initial_game_info(self)
             self.nav.set_destination(self.destination)
             self.on_ring = False
 
@@ -164,8 +170,8 @@ def preacher(self):
 
     """
 
-    if man_distance(locate(self.me), self.destination) < 15 and not self.on_ring:
-        new_objective = closest_passable(self, locate(self.me), ring(100, 121))
+    if distance(locate(self.me), self.destination) < 13 ** 2 and not self.on_ring:
+        new_objective = closest_passable(self, locate(self.me), ring(9, 11))
         self.log('going to ring')
         self.nav.set_destination(new_objective)
         self.on_ring = True
@@ -176,6 +182,9 @@ def preacher(self):
     # TODO
     moving_dir = self.nav.next_tile(self)
     self.log('moving dir: {}'.format(moving_dir))  # Move to closest non-occupied mine
+    if moving_dir is None:
+        self.log('movingdir is none')
+        return
     if moving_dir[0] == moving_dir[1] == 0:  # moving_dir == (0,0)
         if im_at(self, self.destination):  # Am I at my destination?
             self.log('no castle here, so next castle')

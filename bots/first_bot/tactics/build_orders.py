@@ -137,7 +137,7 @@ class BuildOrderManager(object):
             return None
 
         order = None
-
+        # #
         # # Type of Game Build order
         # if self.build_step < 6 and bc.me.unit == SPECS["CASTLE"]:
         #     bc.log('First turns build orders')
@@ -145,7 +145,7 @@ class BuildOrderManager(object):
         #     unit = self.current_order()
         #     bc.log('    build order {}'.format(self.build_order))
         #     bc.log('    trying to build {}'.format(unit))
-        #     if self.enough_for_unit(bc, unit):
+        #     if self.enough_for_pilgrim(bc, unit):
         #         # bc.log('enough pela')
         #         target = self.current_target(bc)
         #         bc.log('    target: {}'.format(target))
@@ -164,7 +164,7 @@ class BuildOrderManager(object):
         if len(bc.combat.enemy_military) > 0:
             bc.log('We are under attack')
             unit = bc.tactics.counter_unit(bc)
-            target = locate(bc.combat.lowest_health_enemy())
+            target = locate(bc.combat.closest_visible_enemy(bc))
             order = dir_build(bc, unit, target)
             bc.log('    unit: {}, target: {}'.format(unit, target))
             if order is not None:
@@ -178,7 +178,7 @@ class BuildOrderManager(object):
         # TODO if missing pilgrims:
         # Pilgrims for my mines
         unit = "PILGRIM"
-        if self.enough_for_unit(bc, unit):
+        if self.enough_for_pilgrim(bc, unit):
             target = bc.map_process.next_mine(bc)
             bc.log('    target: {}'.format(target))
             if target is not None:
@@ -197,7 +197,7 @@ class BuildOrderManager(object):
         # Offensive lattice?
         unit = bc.tactics.lategame_unit(bc)
         target = bc.tactics.lategame_target(bc)
-        if self.enough_for_unit(bc, unit):
+        if self.enough_for_pilgrim(bc, unit):
             if target is not None:
                 order = dir_build(bc, unit, target)
                 bc.log('unit: {}, target: {}'.format(unit, target))
@@ -247,18 +247,27 @@ class BuildOrderManager(object):
 
     def current_target(self, bc):
 
+        if self.build_order[self.build_step] == "PILGRIM":
+            target = bc.map_process.next_mine(bc)
+        else:
+            target = bc.map_process.closest_e_castle_for_units(bc)
         bc.log('Current Target:')
         bc.log('    build step: {}'.format(self.build_step))
-        bc.log('    target order: {}'.format(self.target_order))
-        if self.build_step < len(self.target_order):
-            target = self.target_order[self.build_step]
-            bc.log('    target {}'.format(target))
-            if target == 'm':
-                target = bc.map_process.next_mine(bc)
-                bc.log('        target {}'.format(target))
-            return target
-        else:
-            return None
+        bc.log('    target : {}'.format(target))
+        return target
+
+        # bc.log('Current Target:')
+        # bc.log('    build step: {}'.format(self.build_step))
+        # bc.log('    target order: {}'.format(self.target_order))
+        # if self.build_step < len(self.target_order):
+        #     target = self.target_order[self.build_step]
+        #     bc.log('    target {}'.format(target))
+        #     if target == 'm':
+        #         target = bc.map_process.next_mine(bc)
+        #         bc.log('        target {}'.format(target))
+        #     return target
+        # else:
+        #     return None
 
     def built_correctly(self, bc):
         """ build confirmation, increase the build step index"""
@@ -290,10 +299,19 @@ class BuildOrderManager(object):
         unit_k_cost = SPECS['UNITS'][SPECS[unit]]['CONSTRUCTION_KARBONITE']
         unit_f_cost = SPECS['UNITS'][SPECS[unit]]['CONSTRUCTION_FUEL']
 
-        # TODO uncomment after testing
+        return bc.karbonite >= self.reserve_karb + unit_k_cost \
+               and bc.fuel >= self.reserve_fuel + unit_f_cost
+
+    def enough_for_pilgrim(self, bc, unit):
+        """ returns True if you have enough materials """
+        if unit is None:
+            return False
+        unit_k_cost = SPECS['UNITS'][SPECS[unit]]['CONSTRUCTION_KARBONITE']
+        unit_f_cost = SPECS['UNITS'][SPECS[unit]]['CONSTRUCTION_FUEL']
+
+
         # return bc.karbonite >= self.reserve_karb + unit_k_cost \
         #        and bc.fuel >= self.reserve_fuel + unit_f_cost
         return True
-
 
 #

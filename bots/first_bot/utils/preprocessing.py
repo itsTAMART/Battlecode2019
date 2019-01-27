@@ -96,6 +96,8 @@ class MapPreprocess(object):
     index_fuel_mine = 0
     k_distances = []
     f_distances = []
+    mine_distances = []
+
 
     def get_initial_game_info(self, bc):
 
@@ -264,42 +266,58 @@ class MapPreprocess(object):
         """
         mine_type = ''
         mine = None
-        index = self.mine_index % ((len(self.karb_mines) + len(self.fuel_mines)))
+        # index = self.mine_index % ((len(self.karb_mines) + len(self.fuel_mines)))
+        #
+        # # # Only build for the mines of that church or castle
+        # # if self.mine_index >= (len(self.karb_mines) + len(self.fuel_mines)):
+        # #     return mine
+        #
+        # # CHOOSE
+        # if self.mine_index % 2 == 0:  # Here we go for karb or fuel
+        #     mine_type = 'k'
+        # else:
+        #     mine_type = 'f'
+        #
+        # # For the first 3 mines
+        # if self.mine_index < 4:
+        #     if bc.tactics.RUSH:
+        #         bc.log('rush custom mine')
+        #         rush_build = ['s', 'f', 'f']
+        #         mine_type = rush_build[self.mine_index]
+        #
+        #     if bc.tactics.ECON:
+        #         bc.log('econ custom mine')
+        #         econ_build = ['k', 'k', 'f']
+        #         mine_type = econ_build[self.mine_index]
+        #
+        # # BUILD
+        # if mine_type == 'k':  # Here we go for karb
+        #     mine = self.next_karb_mine(bc)
+        #     if mine is None:
+        #         mine = self.next_fuel_mine(bc)
+        # elif mine_type == 'f':  # Here we go fuel
+        #     mine = self.next_fuel_mine(bc)
+        #     if mine is None:
+        #         mine = self.next_karb_mine(bc)
+        # else:
+        #     mine = None
+        #     self.mine_index -= 1
+        #
 
-        # # Only build for the mines of that church or castle
-        # if self.mine_index >= (len(self.karb_mines) + len(self.fuel_mines)):
-        #     return mine
+        if self.mine_index >= (len(self.karb_mines) + len(self.fuel_mines)):
+            return None
 
-        # CHOOSE
-        if self.mine_index % 2 == 0:  # Here we go for karb or fuel
-            mine_type = 'k'
-        else:
-            mine_type = 'f'
+        self.sorted_mines_by_distance(bc)
 
-        # For the first 3 mines
-        if self.mine_index < 4:
-            if bc.tactics.RUSH:
-                bc.log('rush custom mine')
-                rush_build = ['s', 'f', 'f']
-                mine_type = rush_build[self.mine_index]
+        mines = self.k_distances
 
-            if bc.tactics.ECON:
-                bc.log('econ custom mine')
-                econ_build = ['k', 'k', 'f']
-                mine_type = econ_build[self.mine_index]
+        for a in self.f_distances:
+            mines.append(a)
 
-        # BUILD
-        if mine_type == 'k':  # Here we go for karb
-            mine = self.next_karb_mine(bc)
-            if mine is None:
-                mine = self.next_fuel_mine(bc)
-        elif mine_type == 'f':  # Here we go fuel
-            mine = self.next_fuel_mine(bc)
-            if mine is None:
-                mine = self.next_karb_mine(bc)
-        else:
-            mine = None
-            self.mine_index -= 1
+            mines = sorted_tuples(mines)
+
+        d, mine = mines[self.mine_index]
+
 
         self.mine_index += 1
         return mine
