@@ -674,9 +674,9 @@ class Navigation(object):
         # bc.log('cost so far')
         # bc.log(cost_so_far)
 
-        HITS = 40
+        HITS = 50
         if bc.me.time > 1000:
-            HITS = 70
+            HITS = 80
         elif bc.me.time < 400:
             HITS = 20
         if bc.me.time < 200:

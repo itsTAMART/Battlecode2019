@@ -221,10 +221,10 @@ class MapPreprocess(object):
 
         # filter distances if d to church is < 7
         for mine in self.karb_mines:
-            if man_distance(church_loc, mine) > 7:
+            if distance(church_loc, mine) > 36:
                 k_mines.append(mine)
         for mine in self.fuel_mines:
-            if man_distance(church_loc, mine) > 7:
+            if distance(church_loc, mine) > 36:
                 f_mines.append(mine)
         self.karb_mines = k_mines
         self.fuel_mines = f_mines
@@ -245,10 +245,10 @@ class MapPreprocess(object):
         k_mines = []
         f_mines = []
         for mine in self.karb_mines:
-            if (int(man_distance(locate(bc.me), mine)) < 7):
+            if (int(distance(locate(bc.me), mine)) < 6 ** 2):
                 k_mines.append(mine)
         for mine in self.fuel_mines:
-            if (int(man_distance(locate(bc.me), mine)) < 7):
+            if (int(distance(locate(bc.me), mine)) < 6 ** 2):
                 f_mines.append(mine)
         self.karb_mines = k_mines
         self.fuel_mines = f_mines

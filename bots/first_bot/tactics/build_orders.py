@@ -93,6 +93,7 @@ class BuildOrderManager(object):
 
     # build steps
     build_step = 0
+    mine_step = 0
     build_order = []
     target_order = []
 
@@ -138,27 +139,27 @@ class BuildOrderManager(object):
 
         order = None
         # #
-        # # Type of Game Build order
-        # if self.build_step < 6 and bc.me.unit == SPECS["CASTLE"]:
-        #     bc.log('First turns build orders')
-        #     self.build_order_from_gametype(bc)
-        #     unit = self.current_order()
-        #     bc.log('    build order {}'.format(self.build_order))
-        #     bc.log('    trying to build {}'.format(unit))
-        #     if self.enough_for_pilgrim(bc, unit):
-        #         # bc.log('enough pela')
-        #         target = self.current_target(bc)
-        #         bc.log('    target: {}'.format(target))
-        #         order = dir_build(bc, unit, target)
-        #         if order is not None and target is not None:
-        #             bc.comms.send_loc(bc, target, 2,
-        #                               code=T2C['YOUR_MINE_IS'])  # SEND THE unit THE LOCATION TO ITS target
-        #             self.built_correctly(bc)
-        #             return order
-        #         else:
-        #             bc.log('    all directions occupied')
-        #     else:
-        #         bc.log('    not enough from what we saved')
+        # Type of Game Build order
+        if self.build_step < 5 and bc.me.unit == SPECS["CASTLE"]:
+            bc.log('First turns build orders')
+            self.build_order_from_gametype(bc)
+            unit = self.current_order()
+            bc.log('    build order {}'.format(self.build_order))
+            bc.log('    trying to build {}'.format(unit))
+            if self.enough_for_pilgrim(bc, unit):
+                # bc.log('enough pela')
+                target = self.current_target(bc)
+                bc.log('    target: {}'.format(target))
+                order = dir_build(bc, unit, target)
+                if order is not None and target is not None:
+                    bc.comms.send_loc(bc, target, 2,
+                                      code=T2C['YOUR_MINE_IS'])  # SEND THE unit THE LOCATION TO ITS target
+                    self.built_correctly(bc)
+                    return order
+                else:
+                    bc.log('    all directions occupied')
+            else:
+                bc.log('    not enough from what we saved')
         # Def from rush
         # Def pilgrim
         if len(bc.combat.enemy_military) > 0:
@@ -190,7 +191,9 @@ class BuildOrderManager(object):
                     self.built_correctly(bc)
                     return order
                 else:
-                    bc.log('    no more pilgrims left to build')
+                    bc.log('    order was None')
+            else:
+                bc.log('    no more pilgrims left to build')
         else:
             bc.log('    not enough to build pilgrims')
         # Defensive lattice

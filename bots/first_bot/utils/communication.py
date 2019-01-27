@@ -252,10 +252,7 @@ class Communications(object):
                 # Plan for it with the build order
                 bc.log('save resources for the new church')
                 bc.build_order.save_for_church(bc)
-                # Recalculate mines of this castle taking into account the church
-                bc.log('replan mines for the new church')
-                bc.map_process.my_churches = self.churches_coords
-                bc.map_process.filter_mines_for_church(bc, church_cord)
+
 
 
         pass
@@ -275,6 +272,10 @@ class Communications(object):
                 continue
             bc.log('receiving a new church')
             bc.build_order.church_built(bc)
+            # Recalculate mines of this castle taking into account the church
+            bc.log('replan mines for the new church')
+            bc.map_process.my_churches = self.churches_coords
+            bc.map_process.filter_mines_for_church(bc, self.churches_coords.pop())
 
     def receive_target(self, bc):
         bc.log('Receiving target')
